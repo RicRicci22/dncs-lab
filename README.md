@@ -1,6 +1,8 @@
 # DNCS-LAB
 
 This repository contains the Vagrant files required to run the virtual lab environment used in the DNCS course.
+
+
 Progetto di Sergio Povoli e Riccardo Ricci
 ```
 
