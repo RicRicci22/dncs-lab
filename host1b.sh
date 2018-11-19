@@ -4,3 +4,5 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt-get update
 apt-get install -y docker-ce --assume-yes --force-yes
+ip link set dev eth1 up
+ip add add 192.168.250.2/27 dev eth1
