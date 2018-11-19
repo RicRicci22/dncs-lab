@@ -6,3 +6,4 @@ apt-get update
 apt-get install -y docker-ce --assume-yes --force-yes
 ip link set dev eth1 up
 ip add add 192.168.252.2/30 dev eth1
+ip route add 192.168.248.0/21 via 192.168.252.1
