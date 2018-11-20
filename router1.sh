@@ -19,12 +19,13 @@ ip add add 192.168.250.1/27 dev eth1.12
 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
 service frr restart
-vtysh
-vtysh conf t
-vtysh router ospf
-vtysh redistribute connected
-vtysh exit
-vtysh interface eth2
-vtysh ip ospf area 0.0.0.0
-vtysh exit 
-vtysh write
+
+vtysh -c 'conf t'
+vtysh -c 'router ospf'
+vtysh -c 'redistribute connected'
+vtysh -c 'exit'
+vtysh -c 'interface eth2'
+vtysh -c 'ip ospf area 0.0.0.0'
+vtysh -c 'exit'
+vtysh -c 'write'
+
