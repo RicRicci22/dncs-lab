@@ -1,3 +1,4 @@
+#!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y tcpdump apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
@@ -10,3 +11,4 @@ ip link set dev eth1 up
 ip link set dev eth2 up
 ip add add 192.168.251.2/30 dev eth2
 ip add add 192.168.252.1/30 dev eth1
+ip route add 192.168.248.0/21 via 192.168.251.2

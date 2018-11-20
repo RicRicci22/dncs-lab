@@ -1,3 +1,4 @@
+#!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 apt-get install -y apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
