@@ -16,12 +16,11 @@ sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
 service frr restart
 vtysh
-conf t
-router ospf
-redistribute connected
-exit
-interface eth2
-ip ospf area 0.0.0.0
-exit 
-exit
-write
+vtysh conf t
+vtysh router ospf
+vtysh redistribute connected
+vtysh exit
+vtysh interface eth2
+vtysh ip ospf area 0.0.0.0
+vtysh exit 
+vtysh write
