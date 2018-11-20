@@ -12,3 +12,16 @@ ip link set dev eth2 up
 ip add add 192.168.251.2/30 dev eth2
 ip add add 192.168.252.1/30 dev eth1
 ip route add 192.168.248.0/21 via 192.168.251.2
+sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
+sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
+service frr restart
+vtysh
+conf t
+router ospf
+redistribute connected
+exit
+interface eth2
+ip ospf area 0.0.0.0
+exit 
+exit
+write

@@ -12,11 +12,21 @@ ip link add link eth1 name eth1.11 type vlan id 11
 ip link add link eth1 name eth1.12 type vlan id 12
 ip link set dev eth1.11 up
 ip link set dev eth1.12 up
-<<<<<<< Updated upstream
 ip link set dev eth2 up
 ip add add 192.168.251.1/30 dev eth2
 ip add add 192.168.249.1/24 dev eth1.11
 ip add add 192.168.250.1/27 dev eth1.12
-sed "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
-sed "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
+sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
+sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
+service frr restart
+vtysh
+conf t
+router ospf
+redistribute connected
+exit
+interface eth2
+ip ospf area 0.0.0.0
+exit 
+exit
+write
 
