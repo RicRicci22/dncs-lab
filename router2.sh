@@ -15,6 +15,7 @@ ip route add 192.168.248.0/21 via 192.168.251.2
 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
 service frr restart
+
 vtysh -c 'conf t'
 vtysh -c 'router ospf'
 vtysh -c 'redistribute connected'
