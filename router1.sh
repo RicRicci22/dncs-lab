@@ -11,6 +11,7 @@ ip link add link eth1 name eth1.11 type vlan id 11
 ip link add link eth1 name eth1.12 type vlan id 12
 ip link set dev eth1.11 up
 ip link set dev eth1.12 up
+ip link set dev eth2 up
 ip add add 192.168.251.1/30 dev eth2
 ip add add 192.168.249.1/24 dev eth1.11
 ip add add 192.168.250.1/27 dev eth1.12
