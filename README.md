@@ -12,7 +12,8 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [Vagrant File](#vagrant-file)
   * [host1a.sh](#host1ash)
   * [host1b.sh](#host1bsh)
-* [How-to test](#how-to-test)
+  * [host2c.sh](#host2csh)
+* [How-to test](#how-to-test)  
   *[Switch test](#switch)
   *[Rouer-1 test](#router-1)
 
@@ -171,7 +172,57 @@ Now we focus on the most important command in this file:
 *Line 7:* In this line we assigned an IP address with properly subnet-mask to the `host-1-b eth1`.  
 *Line 8:* We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other network in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.250.1 the ip address of `eth1.12 router-1` interface.
 
+
+## host2c.sh
+
+Host2c.sh contains this line:  
+
+```
+1 export DEBIAN_FRONTEND=noninteractive
+2 sudo su 
+3 apt-get update
+4 apt-get install -y apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
+5 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+6 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+7 apt-get update
+8 apt-get install -y docker-ce --assume-yes --force-yes
+9 ip link set dev eth1 up
+10 ip add add 192.168.252.2/30 dev eth1
+11 ip route add 192.168.248.0/21 via 192.168.252.1
+12
+13 docker rm $(docker ps -a -q) #this command kills all containers if present, is useful if a user load the VM more than once.
+14 docker run -dit --name SRwebserver -p 8080:80 -v /home/user/website/:/usr/local/apache2/htdocs/ httpd:2.4
+15 
+16 echo "<!DOCTYPE html>
+17 <html lang="en">
+18 <head>
+19     <meta charset="UTF-8">
+20     <title>Pagina web di Sergio e Riccardo</title>
+21 </head>
+22 <body>
+23     <h1 style='color: #5e9ca0;'>HI, THIS IS A DEMO WEBPAGE&nbsp;</h1>
+24     <h2 style='color: #2e6c80;'>Creators:</h2>
+25   <p>- Riccardo Ricci -- 181398</p>
+26   <p>- Sergio Povoli -- 185790</p>
+27   <p><strong>&nbsp;</strong></p>   
+28 </body>
+29 </html>" > /home/user/website/index.html
+
+```
+
+Now we focus on the most important command in this file:
+
+*Line 4:*  
+*Line 8:*  
+*Line 9:* We set `eth1`, the host interface, UP.  
+*Line 10:* In this line we assigned an IP address with properly subnet-mask to the `host-1-b eth1`.  
+*Line 11:* We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other network in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
+*Line 14:*  
+*Line 15:* 
+*Lines 16 to 29:*   
+
 # How-to test 
+
  - Install Virtualbox and Vagrant
  - Clone this repository
 `git clone https://github.com/SergioPovoli/dncs-lab.git`
