@@ -83,10 +83,10 @@ For this reason we decided to assign this ip subnets:
 |   **C** |   192.168.252.0/30    | (2^2)-2 = 2   |
 |   **D** |   192.168.251.0/30    | (2^2)-2 = 2   |  
 
-We calculated the available number [*N*] with this formula ***((2^M)-2)***.  
+We calculated the available number [*N*] with this formula **((2^M)-2)**.  
 Where:  
 - *N* is the available IPs  
-- *M* is the bit dedicated to the subnet [e.g. for the Network A id 32-24=8]. M belongs to Natural number.
+- *M* is the bit dedicated to the subnet [e.g. for the Network **A** id 32-24=8]. M belongs to Natural number.
 - *-2* is the the unavailable ip in any network. In fact every subnet has 2 dedicate ip, one for broadcast and one for network.  
 
 Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
