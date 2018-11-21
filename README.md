@@ -3,8 +3,8 @@
 Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunication System @UniTN
 
 ##Table of contents
-- [Requirements] (*requirements)
-- [Network Map] (*network-map)
+- [Requirements](#requirements)
+- [Network Map](#network-map)
 
 
 # Requirements
