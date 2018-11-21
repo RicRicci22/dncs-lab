@@ -200,13 +200,13 @@ Terminal 5 --> `vagrant ssh host-1-b`
 Terminal 6 --> `vagrant ssh host-2-c`
 
 This commands allow to log in into the VM's, every login must return the same message (because all VM's are Ubuntu Machines). The message is the following:
-```
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)
- * Documentation:  https://help.ubuntu.com/
-Development Environment
+
+***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)
+Documentation:  https://help.ubuntu.com/
+ Development Environment
 Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2
-[08:22:11 vagrant@router-1:~] $ 
- ```
+[08:22:11 vagrant@router-1:~] $***
+ 
  In this piece of terminal you can see our last login, in your case, at the very first time you log in, this line will be omitted.
  Ok, here finishes the common part, so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart from how to use host-1-a and host-1-b, that are the hosts from where you are able to retrieve a webpage from host-2-c, we describe commands in switch and in the routers to verify that some functions such as ospf are running properly.
  
@@ -242,7 +242,7 @@ The firts command is this:
    ovs-vsctl list-br
   ```
   This command show on the terminal a list of all the bridges present in the VM. But what are bridges? In these case we refer to a bridge as a switch, so we can say that it's a list of all the switches present. If this command is run inside this VM, the feedback must be:
-  switch 
+ ***switch*** 
   That is in fact the only bridge that we create inside this VM.
   
   Another command, similar to this immediatly above is:
@@ -252,10 +252,39 @@ The firts command is this:
    ```
   
  This command show all the ports related to the switch. The output must be
-  eth1
+  ***eth1
   eth2
-  eth3
+  eth3***
   Two ports connected to the hosts 1-a and 1-b and a port connected witch router-1.
   
+  For a deeply description of ports on the switch you must run this command:
+  ``` 
+   ovs-vsctl show
+   ```
+   After the execution of this command, the output must be:
+     
+***Bridge switch
+        Port "eth1"
+            Interface "eth1"
+        Port switch
+            Interface switch
+                type: internal
+        Port "eth2"
+            tag: 11
+            Interface "eth2"
+        Port "eth3"
+            tag: 12
+            Interface "eth3"
+    ovs_version: "2.0.2"***
+    
+Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
+  
   ## Router-1
-  Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1, and the commands can be extended to router-2.
+  Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1. Commands for router-2 are the same. Even here, like the switch, all the commands that we're about to list are for gather informations about the services running on our router. 
+  The first command we wanna talk about is this:
+  ``` 
+  service frr status
+  ```
+  The output must be 
+  ***zebra is running
+  ospfd is running***
