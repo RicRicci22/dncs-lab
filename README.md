@@ -9,6 +9,8 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [Subnetting](#subnetting)  
   * [Ip address assignment](#ip-address-assignment)
   * [Virtual Lans](#virtual-lans)
+  * [Vagrant File](#vagrant-file)
+  * [host1a.sh](#host1a.sh)
 
 
 # Requirements
@@ -93,8 +95,8 @@ Where:
 Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
 
 ## Virtual Lans
-We decided to use vlans for the networks A and B. In fact, networks A and B are, hypotetically, on the same broadcast area. Using vlans we can split this area in two virtual subnets without adding any router. We decide to proceed like this because in the assignement, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a webserver located on host-2-c and retrieve a simple web page. 
-We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same iterface.
+We decided to use vlans for the networks A and B. In fact, networks A and B are, hypothetically, on the same broadcast area. Using vlans we can split this area in two virtual subnets without adding any router. We decide to proceed like this because in the assignment, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a webserver located on host-2-c and retrieve a simple web page. 
+We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same interface.
 
 | Network | VLan ID |
 |:-------:|:-------:|
@@ -114,6 +116,14 @@ Now the Interface of the **B** Network is:
 |:---------:|:----------:|:--------:|:-------------:|
 | eth1.12   | `router-1` | 12       | 192.168.250.1 |
 | eth1      | `host-1-b` | None     | 192.168.250.2 |
+
+## Vagrant File
+The vagrant File initialize all the necessary virtual machine and the link between the virtual machine. Now we will focused on this command line that it is present in all virtual machine initialization.
+`NameOfVM.vm.provision "shell", path: "NameOfFile.sh"`  
+Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] to runs any configured provisioners. Provisioners in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
+
+## host1a.sh
+
 
 
 # How-to
