@@ -11,6 +11,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [Virtual Lans](#virtual-lans)
   * [Vagrant File](#vagrant-file)
   * [host1a.sh](#host1ash)
+  * [host1b.sh](#host1nsh)
 
 
 # Requirements
@@ -124,7 +125,47 @@ Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] to runs an
 
 ## host1a.sh
 
+Host1a.sh cointains this line:  
 
+```
+1 export DEBIAN_FRONTEND=noninteractive  
+2 sudo su  
+3 apt-get update  
+4 apt-get install -y curl --assume-yes  
+5 apt-get install -y tcpdump --assume-yes  
+6 ip link set dev eth1 up  
+7 ip add add 192.168.249.2/24 dev eth1  
+8 ip route add 192.168.248.0/21 via 192.168.249.1  
+
+```
+
+Now we focus on the most important command in this file.  
+*Line 4:* We installed `curl`, a very important command for have the possibility to tarsfert a data of a webpage hosted in `host-2-c` that we will browse.
+*Line 6:* We set `eth1`, the host interface, UP.  
+*Line 7:* In this line we assigned an IP adress with proprely subnetmask to the `host-1-a eth1`.  
+*Line 8:* We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other network in this project. All packet with 192.168.248.0/21 desination goes to the 192.168.249.1 the ip adress of `eth1.11 router-1` interface.  
+
+## host1b.sh
+
+Host1a.sh cointains this line:  
+
+```
+1 export DEBIAN_FRONTEND=noninteractive
+2 sudo su 
+3 apt-get update
+4 apt-get install -y curl --assume-yes
+5 apt-get install -y tcpdump --assume-yes
+6 ip link set dev eth1 up
+7 ip add add 192.168.250.2/27 dev eth1
+8 ip route add 192.168.248.0/21 via 192.168.250.1 
+
+```
+
+Now we focus on the most important command in this file.  
+*Line 4:* We installed `curl`, a very important command for have the possibility to tarsfert a data of a webpage hosted in `host-2-c` that we will browse.
+*Line 6:* We set `eth1`, the host interface, UP.  
+*Line 7:* In this line we assigned an IP adress with proprely subnetmask to the `host-1-b eth1`.  
+*Line 8:* We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other network in this project. All packet with 192.168.248.0/21 desination goes to the 192.168.250.1 the ip adress of `eth1.12 router-1` interface.
 
 # How-to test 
  - Install Virtualbox and Vagrant
