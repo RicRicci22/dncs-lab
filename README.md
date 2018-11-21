@@ -1,6 +1,6 @@
 # DNCS-LAB Assignament A.Y. 2018-2019
 
-Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunication System @UniTN
+Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communication System @UniTN
 
 ## Table of contents
 - [Requirements](#requirements)
