@@ -23,7 +23,7 @@ echo "<!DOCTYPE html>
     <h1 style='color: #5e9ca0;'>HI, THIS IS A DEMO WEBPAGE&nbsp;</h1>
     <h2 style='color: #2e6c80;'>Creators:</h2>
 	<p>- Riccardo Ricci -- 181398</p>
-	<p>- Sergio Povoli - 185790</p>
+	<p>- Sergio Povoli -- 185790</p>
 	<p><strong>&nbsp;</strong></p>   
 </body>
 </html>" > /home/user/website/index.html
