@@ -101,12 +101,12 @@ We setup the switch interface linked to the router in trunk mode, in order to si
 | **B**   | 12      |  
 Now the Interface of the **A** Network is:  
 | Interface | Host       | Vlan Tag | IP            |
-|-----------|------------|----------|---------------|
+|:---------:|:----------:|:--------:|:-------------:|
 | eth1.11   | 'router-1' | 11       | 192.168.249.1 |
 | eth1      | 'host-1-a' | None     | 192.168.249.2 |  
 Now the Interface of the **B** Network is:  
 | Interface | Host       | Vlan Tag | IP            |
-|-----------|------------|----------|---------------|
+|:---------:|:----------:|:--------:|:-------------:|
 | eth1.12   | 'router-1' | 12       | 192.168.250.1 |
 | eth1      | 'host-1-b' | None     | 192.168.250.2 |
 
