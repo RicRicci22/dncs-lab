@@ -1,13 +1,13 @@
 # DNCS-LAB Assignment A.Y. 2018-2019
 
-Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communication System @UniTN
+Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communication System hosted by UniTN
 
 ## Table of contents
 * [Requirements](#requirements)
 * [Network Map](#network-map)
-* [Our approach to project](#our_approach_to_project)  
+* [Our approach to project](#our-approach-to-project)  
   * [Subnetting](#subnetting)  
-  * [Ip address assignment](#ip_address_assignment)
+  * [Ip address assignment](#ip-address-assignment)
 
 
 # Requirements
@@ -76,12 +76,20 @@ In this assignment our aim was to follow this requirement:
 - Consume as few IP addresses as possible  
 For this reason we decided to assign this ip subnets:
 
-| Network |     Network Mask      | available IPs |
+| Network |     Network Mask      | Available IPs |
 |:-------:|:---------------------:|:-------------:|
 |   **A** |   192.168.249.0/24    | (2^8)-2 = 254 |
 |   **B** |   192.168.250.0/27    | (2^5)-2 = 30  |
 |   **C** |   192.168.252.0/30    | (2^2)-2 = 2   |
-|   **D** |   192.168.251.0/40    | (2^2)-2 = 2   | 
+|   **D** |   192.168.251.0/30    | (2^2)-2 = 2   |  
+
+We calculated the available number [*N*] with this formula ***((2^M)-2)***.  
+Where:  
+- *N* is the available IPs  
+- *M* is the bit dedicated to the subnet [e.g. for the Network A id 32-24=8]. M belongs to Natural number.
+- *-2* is the the unavailable ip in any network. In fact every subnet has 2 dedicate ip, one for broadcast and one for network.  
+
+Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
 
 # How-to
  - Install Virtualbox and Vagrant
