@@ -3,11 +3,11 @@
 Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communication System @UniTN
 
 ## Table of contents
-- [Requirements](#requirements)
-- [Network Map](#network-map)
-- [Our approach to project](#our_approach_to_project)  
-  *[Subnetting](#subnetting)  
-  *[Ip address assignment](#Ip_address_assignment)
+* [Requirements](#requirements)
+* [Network Map](#network-map)
+* [Our approach to project](#our_approach_to_project)  
+  * [Subnetting](#subnetting)  
+  * [Ip address assignment](#ip_address_assignment)
 
 
 # Requirements
@@ -70,6 +70,18 @@ The 4 networks are:
 -**D** The area that contains other router-1 port and other router-2 port.
 
 ## Ip address assignment
+In this assignment our aim was to follow this requirement:  
+- Up to 130 hosts in the same subnet of host-1-a  
+- Up to 25 hosts in the same subnet of host-1-b  
+- Consume as few IP addresses as possible  
+For this reason we decided to assign this ip subnets:
+
+| Network |     Network Mask      | available IPs |
+|:-------:|:---------------------:|:-------------:|
+|   **A** | /24 - 255.255.255.0   | (2^8)-2 = 254 |
+|   **B** | /27 - 255.255.255.224 | (2^5)-2 = 30  |
+|   **C** | /30 - 255.255.255.252 | (2^2)-2 = 2   |
+|   **D** | /30 - 255.255.255.252 | (2^2)-2 = 2   | 
 
 # How-to
  - Install Virtualbox and Vagrant
