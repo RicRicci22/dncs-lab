@@ -10,7 +10,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [Ip address assignment](#ip-address-assignment)
   * [Virtual Lans](#virtual-lans)
   * [Vagrant File](#vagrant-file)
-  * [host1a.sh](#host1a.sh)
+  * [host1a.sh](#host1ash)
 
 
 # Requirements
@@ -118,7 +118,7 @@ Now the Interface of the **B** Network is:
 | eth1      | `host-1-b` | None     | 192.168.250.2 |
 
 ## Vagrant File
-The vagrant File initialize all the necessary virtual machine and the link between the virtual machine. Now we will focused on this command line that it is present in all virtual machine initialization.
+The vagrant File initialize all the necessary virtual machine and the link between the virtual machine. Now we will focused on this command line that it is present in all virtual machine initialization.  
 `NameOfVM.vm.provision "shell", path: "NameOfFile.sh"`  
 Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] to runs any configured provisioners. Provisioners in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
 
