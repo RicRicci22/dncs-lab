@@ -93,7 +93,8 @@ Where:
 Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
 
 ## Virtual Lans
-
+We decided to use vlans for the networks A and B. In fact, networks A and B are, hypotetically, on the same broadcast area. Using vlans we can split this area in two virtual subnets without adding any router. We decide to proceed like this because in the assignement, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a webserver located on host-2-c and retrieve a simple web page. 
+We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same iterface. 
 
 # How-to
  - Install Virtualbox and Vagrant
