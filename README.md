@@ -8,6 +8,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
 * [Our approach to project](#our-approach-to-project)  
   * [Subnetting](#subnetting)  
   * [Ip address assignment](#ip-address-assignment)
+  * [Virtual Lans](#virtual-lans)
 
 
 # Requirements
@@ -84,12 +85,15 @@ For this reason we decided to assign this ip subnets:
 |   **D** |   192.168.251.0/30    | (2^2)-2 = 2   |  
 
 We calculated the available number [*N*] with this formula **((2^M)-2)**.  
-Where:  
+Where:
 - *N* is the available IPs  
-- *M* is the bit dedicated to the subnet [e.g. for the Network **A** id 32-24=8]. M belongs to Natural number.
+- *M* is the bit dedicated to the host part [e.g. for the Network **A** id 32-24=8]. M belongs to Natural number.
 - *-2* is the the unavailable ip in any network. In fact every subnet has 2 dedicate ip, one for broadcast and one for network.  
 
 Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
+
+## Virtual Lans
+
 
 # How-to
  - Install Virtualbox and Vagrant
