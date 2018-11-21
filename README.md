@@ -5,9 +5,9 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
 ## Table of contents
 - [Requirements](#requirements)
 - [Network Map](#network-map)
-- [Our approach to project](#our_approach_to_project)
-   *[Subnetting](#subnetting)
-   *[Ip address assignment](#Ip_address_assignment)
+- [Our approach to project](#our_approach_to_project)  
+  *[Subnetting](#subnetting)  
+  *[Ip address assignment](#Ip_address_assignment)
 
 
 # Requirements
@@ -62,11 +62,11 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
 # Our approach to project
 
 ## Subnetting
-We decided to split our network in 4 subnetworks, 2 of these are Vlan based.
-The 4 networks are:
--**A** The area that contains host-1-a and all the similar hosts in this subnet and the router-1 port. This is Vlan based.
--**B** The area that contains host-1-b and all the similar hosts in this subnet and the router-1 port. This is Vlan based.
--**C** The area that contains host-2-c and the router-2 port.
+We decided to split our network in 4 subnetworks, 2 of these are Vlan based.  
+The 4 networks are:  
+-**A** The area that contains host-1-a and all the similar hosts in this subnet and the router-1 port. This is Vlan based.  
+-**B** The area that contains host-1-b and all the similar hosts in this subnet and the router-1 port. This is Vlan based.  
+-**C** The area that contains host-2-c and the router-2 port.  
 -**D** The area that contains other router-1 port and other router-2 port.
 
 ## Ip address assignment
