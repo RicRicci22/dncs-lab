@@ -14,7 +14,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunicat
  - Vagrant (https://www.vagrantup.com)
  - Internet
 
-# Netwotk Map
+# Network Map
 
 
         +----------------------------------------------------------------+
