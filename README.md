@@ -2,7 +2,7 @@
 
 Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunication System @UniTN
 
-##Table of contents
+## Table of contents
 - [Requirements](#requirements)
 - [Network Map](#network-map)
 
@@ -14,7 +14,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunicat
  - Vagrant (https://www.vagrantup.com)
  - Internet
 
-#Netwotk Map
+# Netwotk Map
 
 
         +----------------------------------------------------------------+
@@ -57,15 +57,6 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and cCmunicat
         +-----------------------------------------------------------+
 
 
-
-```
-
-# Requirements
- - 10GB disk storage
- - 2GB free RAM
- - Virtualbox
- - Vagrant (https://www.vagrantup.com)
- - Internet
 
 # How-to
  - Install Virtualbox and Vagrant
