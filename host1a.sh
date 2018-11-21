@@ -1,7 +1,7 @@
-#!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -y apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
+sudo su
 apt-get update
+apt-get install -y curl --assume-yes
 apt-get install -y tcpdump --assume-yes
 ip link set dev eth1 up
 ip add add 192.168.249.2/24 dev eth1

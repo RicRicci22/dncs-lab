@@ -1,5 +1,5 @@
-#!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
+sudo su 
 apt-get update
 apt-get install -y tcpdump apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
 wget -O- https://apps3.cumulusnetworks.com/setup/cumulus-apps-deb.pubkey | apt-key add -
