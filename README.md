@@ -205,11 +205,11 @@ Terminal 6 --> `vagrant ssh host-2-c`
 
 This commands allow to log in into the VM's, every login must return the same message (because all VM's are Ubuntu Machines). The message is the following:
 
-***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)  
-Documentation:  https://help.ubuntu.com/  
- Development Environment  
-Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2  
-[08:22:11 vagrant@router-1:~] $  ***
+***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)***  
+***Documentation:  https://help.ubuntu.com/***  
+ ***Development Environment***  
+***Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2 *** 
+***[08:22:11 vagrant@router-1:~] $***
  
  In this piece of terminal you can see our last login, in your case, at the very first time you log in, this line will be omitted.
  Ok, here finishes the common part, so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart from how to use host-1-a and host-1-b, that are the hosts from where you are able to retrieve a web-page from host-2-c, we describe commands in switch and in the routers to verify that some functions such as ospf are running properly.
@@ -269,21 +269,19 @@ The first command is this:
    ```
    After the execution of this command, the output must be:
      
-***
-Bridge switch  
-        Port "eth1"  
-            Interface "eth1"  
-        Port switch  
-            Interface switch  
-                type: internal  
-        Port "eth2"  
-            tag: 11  
-            Interface "eth2"  
-        Port "eth3"  
-            tag: 12  
-            Interface "eth3"  
-    ovs_version: "2.0.2"
-***
+***Bridge switch*** 
+*Tabspace* ***Port "eth1"***  
+*Tabspace**Tabspace* ***Interface "eth1"***  
+*Tabspace* ***Port switch***  
+*Tabspace**Tabspace* ***Interface switch***  
+*Tabspace**Tabspace**Tabspace* ***type: internal***  
+*Tabspace* ***Port "eth2"***  
+*Tabspace**Tabspace* ***tag: 11***  
+*Tabspace**Tabspace* ***Interface "eth2"***  
+*Tabspace* ***Port "eth3"***  
+*Tabspace**Tabspace* ***tag: 12***  
+*Tabspace**Tabspace* ***Interface "eth3"***  
+*Tabspace* ***ovs_version: "2.0.2"***
     
 Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
   
