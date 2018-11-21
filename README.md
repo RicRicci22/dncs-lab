@@ -13,7 +13,8 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [host1a.sh](#host1ash)
   * [host1b.sh](#host1bsh)
 * [How-to test](#how-to-test)
-  *[]
+  *[Switch test](#switch)
+  *[Rouer-1 test](#router-1)
 
 # Requirements
  - 10GB disk storage
@@ -194,21 +195,21 @@ host-2-c                  running (virtualbox)
 
 ```
 Hopefully, this command will return  something like that. It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.
-- Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned folder and and type this commands:
-Terminal 1 --> `vagrant ssh router-1`
-Terminal 2 --> `vagrant ssh router-2`
-Terminal 3 --> `vagrant ssh switch`
-Terminal 4 --> `vagrant ssh host-1-a`
-Terminal 5 --> `vagrant ssh host-1-b`
-Terminal 6 --> `vagrant ssh host-2-c`
+- Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned folder and and type this commands:  
+Terminal 1 --> `vagrant ssh router-1`  
+Terminal 2 --> `vagrant ssh router-2`  
+Terminal 3 --> `vagrant ssh switch`  
+Terminal 4 --> `vagrant ssh host-1-a`  
+Terminal 5 --> `vagrant ssh host-1-b`  
+Terminal 6 --> `vagrant ssh host-2-c`  
 
 This commands allow to log in into the VM's, every login must return the same message (because all VM's are Ubuntu Machines). The message is the following:
 
-***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)
-Documentation:  https://help.ubuntu.com/
- Development Environment
-Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2
-[08:22:11 vagrant@router-1:~] $***
+***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)  
+Documentation:  https://help.ubuntu.com/  
+ Development Environment  
+Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2  
+[08:22:11 vagrant@router-1:~] $  ***
  
  In this piece of terminal you can see our last login, in your case, at the very first time you log in, this line will be omitted.
  Ok, here finishes the common part, so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart from how to use host-1-a and host-1-b, that are the hosts from where you are able to retrieve a web-page from host-2-c, we describe commands in switch and in the routers to verify that some functions such as ospf are running properly.
@@ -268,19 +269,21 @@ The first command is this:
    ```
    After the execution of this command, the output must be:
      
-***Bridge switch
-        Port "eth1"
-            Interface "eth1"
-        Port switch
-            Interface switch
-                type: internal
-        Port "eth2"
-            tag: 11
-            Interface "eth2"
-        Port "eth3"
-            tag: 12
-            Interface "eth3"
-    ovs_version: "2.0.2"***
+***
+Bridge switch  
+        Port "eth1"  
+            Interface "eth1"  
+        Port switch  
+            Interface switch  
+                type: internal  
+        Port "eth2"  
+            tag: 11  
+            Interface "eth2"  
+        Port "eth3"  
+            tag: 12  
+            Interface "eth3"  
+    ovs_version: "2.0.2"
+***
     
 Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
   
