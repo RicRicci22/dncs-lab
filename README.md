@@ -38,7 +38,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
         |  G  |                         |                     +-----+----+
         |  E  |                         |eth1                 |          |
         |  M  |               +-------------------+           |          |
-        |  E  |           eth0|      TRUNK        |           | host-2-c |
+        |  E  |           eth0|    TRUNK PORT     |           | host-2-c |
         |  N  +---------------+      SWITCH       |           |          |
         |  T  |               | 11             12 |           |          |
         |     |               +-------------------+           +----------+
@@ -95,6 +95,21 @@ Whit this formula we decided all the subnets so that *N* is as close as possible
 ## Virtual Lans
 We decided to use vlans for the networks A and B. In fact, networks A and B are, hypotetically, on the same broadcast area. Using vlans we can split this area in two virtual subnets without adding any router. We decide to proceed like this because in the assignement, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a webserver located on host-2-c and retrieve a simple web page. 
 We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same iterface. 
+| Network | VLan ID |
+|---------|---------|
+| **A**   | 11      |
+| **B**   | 12      |  
+Now the Interface of the **A** Network is:  
+| Interface | Host       | Vlan Tag | IP            |
+|-----------|------------|----------|---------------|
+| eth1.11   | 'router-1' | 11       | 192.168.249.1 |
+| eth1      | 'host-1-a' | None     | 192.168.249.2 |  
+Now the Interface of the **B** Network is:  
+| Interface | Host       | Vlan Tag | IP            |
+|-----------|------------|----------|---------------|
+| eth1.12   | 'router-1' | 12       | 192.168.250.1 |
+| eth1      | 'host-1-b' | None     | 192.168.250.2 |
+
 
 # How-to
  - Install Virtualbox and Vagrant
