@@ -10,7 +10,7 @@ ip link set dev eth1 up
 ip add add 192.168.252.2/30 dev eth1
 ip route add 192.168.248.0/21 via 192.168.252.1
 
-docker rm $(docker ps -a -q) --force-yes #this command kills all containers if present, is useful if a user load the VM more than once.
+docker rm $(docker ps -a -q) #this command kills all containers if present, is useful if a user load the VM more than once.
 docker run -dit --name SRwebserver -p 8080:80 -v /home/user/website/:/usr/local/apache2/htdocs/ httpd:2.4
 
 echo "<!DOCTYPE html>
