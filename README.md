@@ -13,9 +13,10 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [host1a.sh](#host1ash)
   * [host1b.sh](#host1bsh)
   * [host2c.sh](#host2csh)
+  * [switch.sh](#switchsh)
 * [How-to test](#how-to-test)  
-  *[Switch test](#switch)
-  *[Rouer-1 test](#router-1)
+  * [Switch test](#switch)
+  * [Rouer-1 test](#router-1)
 
 # Requirements
  - 10GB disk storage
@@ -144,9 +145,9 @@ Host1a.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.
+**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.  
 **Line 6:** We set `eth1`, the host interface, UP.  
-**Line 7:** In this line we assigned an IP adress with properly subnet-mask to the `host-1-a eth1`.  
+**Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-a eth1`.  
 **Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.249.1 the ip address of `eth1.11 router-1` interface.  
 
 ## host1b.sh
@@ -167,10 +168,10 @@ Host1b.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.
+**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.  
 **Line 6:** We set `eth1`, the host interface, UP.  
 **Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-b eth1`.  
-**Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.250.1 the ip address of `eth1.12 router-1` interface.
+**Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.250.1 the ip address of `eth1.12 router-1` interface.
 
 
 ## host2c.sh
@@ -190,7 +191,7 @@ Host2c.sh contains this line:
 10 ip add add 192.168.252.2/30 dev eth1
 11 ip route add 192.168.248.0/21 via 192.168.252.1
 12
-13 docker rm $(docker ps -a -q) #this command kills all containers if present, is useful if a user load the VM more than once.
+13 docker rm $(docker ps -a -q)
 14 docker run -dit --name SRwebserver -p 8080:80 -v /home/user/website/:/usr/local/apache2/htdocs/ httpd:2.4
 15 
 16 echo "<!DOCTYPE html>
@@ -212,14 +213,45 @@ Host2c.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 4:**  
-**Line 8:**  
+**Line 4-5-6-7-8:** This lines download and install *docker*.  
 **Line 9:** We set `eth1`, the host interface, UP.  
-**Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-1-b eth1`.  
-**Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 desination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
-**Line 14:**  
-**Line 15:** 
-**Lines 16 to 29:**   
+**Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-2-c eth1`.  
+**Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
+**Line 12:** This command kills all containers if present, is useful if a user load the VM more than once.  
+**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server that listen for incoming requests on the port 8080. The web-server name is SRwebserver.  
+**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html` and create the file if it isn't present yet. This file is hosted in the right directory of our SRwebserver.
+
+## switch.sh
+
+Host2c.sh contains this line:  
+
+```
+1 export DEBIAN_FRONTEND=noninteractive
+2 sudo su 
+3 apt-get update
+4 apt-get install -y tcpdump --assume-yes
+5 apt-get install -y openvswitch-common openvswitch-switch apt-transport-https ca-certificates curl software-properties-common
+6 ovs-vsctl --if-exists del-br switch
+7 ovs-vsctl add-br switch 
+8 ovs-vsctl add-port switch eth1
+9 ovs-vsctl add-port switch eth2 tag=11
+10 ovs-vsctl add-port switch eth3 tag=12
+11 ip link set dev eth1 up
+12 ip link set dev eth2 up
+13 ip link set dev eth3 up
+14 ip link set dev ovs-system up
+
+```
+
+Now we focus on the most important command in this file:
+
+**Line 4-5-6-7-8:** This lines download and install *docker*.  
+**Line 9:** We set `eth1`, the host interface, UP.  
+**Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-2-c eth1`.  
+**Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
+**Line 12:** This command kills all containers if present, is useful if a user load the VM more than once.  
+**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server that listen for incoming requests on the port 8080. The web-server name is SRwebserver.  
+**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html` and create the file if it isn't present yet. This file is hosted in the right directory of our SRwebserver.
 
 # How-to test 
 
@@ -289,7 +321,7 @@ Another command that you might would use is this:
   ``` 
   route -nve
   ```
-  This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the netmask (here called genmask) and the gateway. In this case we have add a static route, that send packet destinate to every other subnet to the gateway (the router-1 eth1 interface ip). This is visible in the third line of the table.
+  This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the net-mask (here called gen-mask) and the gateway. In this case we have add a static route, that send packet destinate to every other subnet to the gateway (the router-1 eth1 interface ip). This is visible in the third line of the table.
 
 ## Switch
 
@@ -334,7 +366,7 @@ The first command is this:
         ***Interface "eth3"***  
 ***ovs_version: "2.0.2"***
     
-Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
+Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the version of open vSwitch installed onto the machine.  
   
 ## Router-1
 
