@@ -357,7 +357,6 @@ host-2-c                  running (virtualbox)
 
 ```
 Hopefully, this command will return  something like that. It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.  
-
 ## Common part
 This part reports command that you can use in every VM with the same purposes.  
 - Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned folder and and type this commands:  
@@ -393,24 +392,22 @@ It displays the list of Ethernet interfaces present in the host and their option
  ``` 
    tcpdump -i interfaceName
   ```  
-  This command allow to sniff the packets on an ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. 
+  This command allow to sniff the packets on an ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. After the execution of this command, every information of packets passing trought the interface will be displayed, such as the protocol at level four the packet belongs and other informations. 
 - Another command we want to discuss in the common section is this:  
   ``` 
   route -nve
   ```  
 This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the netmask (here called genmask) and the gateway. In every subpart we report the output of code that occurs on our VMs.  
 
-Ok, here finishes the common section so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart commands that allows you, from host-1-a and host-1-b, to retrieve a web-page from host-2-c, we describe commands in the switch and routers to verify that some functions such as ospf are running properly.
-
+Ok, here finishes the common section so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart commands that allows you, from host-1-a and host-1-b, to retrieve a web-page from host-2-c, we describe commands in the switch and routers to verify that some functions such as ospf are running properly.  
 ## Host-1-a  
-
 At this point you must be logged into the VM of host-1-a as a superuser with the command shown below. The principal commands of host-1-a are the same of host-1-b so I omit to discuss of either host-1-a and host-1-b and discuss only the first, the same commands can run, with the same purposes, on host-1-b.  
 From this host (and from host-1-b) we are able to retrieve a simple web-page from a web-server apache running on host-2-c. We decided to install from shell files the functionality **curl**, that permit, among other tasks, to make requests on specific ports. Here's how:  
- - If you want the webpage you have to put this command in the terminal  
+ - If you want get the webpage you have to put this command in the terminal:
  ``` 
    curl 192.168.252.2:8080/index.html 
   ```  
-This command send a request for the file index.html on port 8080 of the web-server running on host-2-c. On host-2-c we configure the server to accept requests on this port and assume them as http requests. So the web-server will answer with the file, that will be printed on the terminal.  You must copy the code from line **!DOCTYPE html** to **/html** and paste it in an empty editor file. Save the file with the extension **.html**, then open it with a browser. After this steps you might be able to see a simple web-page containing our name, our numbers, and a title. It's simple because the only purpose of this page web is to prove that the web-server works properly.  
+This command send a request for the file index.html on port 8080 of the web-server running on host-2-c. On host-2-c, the server is configured to accept requests on this port, assuming them as http requests. So the web-server will answer with the file, that will be printed on the terminal.  You must copy the code from line **!DOCTYPE html** to **/html** and paste it in an empty editor file. Save the file with the extension **.html**, then open it with a browser. After this steps you might be able to see a simple web-page containing our name, our numbers, and a title. It's simple because the only purpose of this page web is to prove that the web-server works properly.  
 - Here i report the output of **ifconfig** of host-1-a  
 ``` 
 eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
@@ -450,11 +447,49 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.248.0   192.168.249.1   255.255.248.0   UG        0 0          0 eth1
 192.168.249.0   0.0.0.0         255.255.255.0   U         0 0          0 eth1
  ```  
-In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and subnet-mask.  
+In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and mask.  
+## Host-1-b
+- Output of **ifconfig** performed on host-1-a  
+``` 
+eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8456 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2113 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:9395485 (9.3 MB)  TX bytes:201745 (201.7 KB)
 
+eth1      Link encap:Ethernet  HWaddr 08:00:27:10:34:de  
+          inet addr:192.168.250.2  Bcast:0.0.0.0  Mask:255.255.255.224
+          inet6 addr: fe80::a00:27ff:fe10:34de/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:648 (648.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+ ``` 
+- Output of **route -nve** executed on host-1-a
+``` 
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.0.2.2        0.0.0.0         UG        0 0          0 eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U         0 0          0 eth0
+192.168.248.0   192.168.250.1   255.255.248.0   UG        0 0          0 eth1
+192.168.250.0   0.0.0.0         255.255.255.224 U         0 0          0 eth1
+``` 
 ## Switch
 
-As below you must be logged into switch VM as a superuser. To manage VLANs we install Open vSwitch on the VM. This tool give us the opportunity to virtually divide the switch in two switches, one for the, here called vlan11 and one for the vlan12. You can find more information about this choice in the above part. Here we describe the most useful command in switch. They aren't configuration commands, but only informational commands, because the configuration commands runs from within shell files.
+As below you must be logged into switch VM as a superuser. To manage VLANs we installed Open vSwitch. This tool give us the opportunity to virtually divide the switch in two switches, one for the, here called vlan11 and one for the vlan12. You can find more information about this choice in the paragraph above, where we discuss our choice. The purpose  of this subparagraph is to describe the most useful command in switch. They aren't configuration commands, but only informational commands, because the configuration commands runs from within shell files.
 The first command is this: 
   ``` 
    ovs-vsctl list-br
@@ -466,15 +501,15 @@ The first command is this:
   ``` 
    ovs-vsctl list-ports switch
    ```  
-This command show all the ports related to the switch. The output must be  
+This command show all the ethernet interfaces related to the bridge chosen. In our case the only bridge is our "switch". The output must be  
   ```
   eth1
   eth2
   eth3
   ```  
-  Two ports connected to the hosts 1-a and 1-b and a port connected witch router-1.  
+  Two interfaces connected to the hosts 1-a and 1-b and one to router-1.  
   
-  For a deeply description of ports on the switch you must run this command:
+  For a deeper description of ports (eth interfaces) on the switch you must run this command:
   ``` 
    ovs-vsctl show
    ```
@@ -494,15 +529,200 @@ Bridge switch
         Interface "eth3"  
  ovs_version: "2.0.2"
 ```
-Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
-  
+This command sintetize the previus 2 commands. Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated to a VLAN. Moreover, it is displayed the version of open vSwitch installed onto the machine.  
+- Output of the command **ifconfig** on switch:  
+```
+- eth0    Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:12259 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2879 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:13913994 (13.9 MB)  TX bytes:263448 (263.4 KB)
+
+eth1      Link encap:Ethernet  HWaddr 08:00:27:2a:4e:77  
+          inet6 addr: fe80::a00:27ff:fe2a:4e77/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:31 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:2502 (2.5 KB)
+
+eth2      Link encap:Ethernet  HWaddr 08:00:27:c1:cf:b3  
+          inet6 addr: fe80::a00:27ff:fec1:cfb3/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:648 (648.0 B)  TX bytes:648 (648.0 B)
+
+eth3      Link encap:Ethernet  HWaddr 08:00:27:76:ce:8f  
+          inet6 addr: fe80::a00:27ff:fe76:ce8f/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:648 (648.0 B)  TX bytes:648 (648.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+ovs-system Link encap:Ethernet  HWaddr 7e:78:89:5c:3f:f8  
+          inet6 addr: fe80::7c78:89ff:fe5c:3ff8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:648 (648.0 B)
+
+switch    Link encap:Ethernet  HWaddr 08:00:27:2a:4e:77  
+          inet6 addr: fe80::6002:c3ff:fef5:3073/64 Scope:Link
+          UP BROADCAST RUNNING  MTU:1500  Metric:1
+          RX packets:16 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:1296 (1.2 KB)  TX bytes:648 (648.0 B)
+
+  ```
 ## Router-1
 
 Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1. Commands for router-2 are the same. Even here, like the switch, all the commands that we're about to list are for gather informations about the services running on our router. 
-The first command we wanna talk about is this:
-  ```
+The first command we want to talk about is:  
+  ```  
   service frr status
-  `` `
-   The output must be 
-  ***zebra is running
-  ospfd is running***
+  ```  
+   The output must be   
+  ```  
+  * zebra is running
+  * ospfd is running
+  ```  
+  This means that on our router, are running 2 daemons. We don't know much about this two daemons, but togheter, they permit the **ospf** routing protocol. Zebra delivers informations between routers involved in the protocol, to permit all the routers to gather the informations of the net topology and permit the redaction of the route table, performed we tought by the ospfd daemon (but we are not sure). 
+  - Output of the command **route -nve** on router-1:  
+ ```
+ Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.0.2.2        0.0.0.0         UG        0 0          0 eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U         0 0          0 eth0
+192.168.249.0   0.0.0.0         255.255.255.0   U         0 0          0 eth1.11
+192.168.250.0   0.0.0.0         255.255.255.224 U         0 0          0 eth1.12
+192.168.251.0   0.0.0.0         255.255.255.252 U         0 0          0 eth2
+192.168.252.0   192.168.251.2   255.255.255.252 UG        0 0          0 eth2
+```  
+This table is a lot informative! This table is automatically compiled by the ospf protocol. We can see that to the subnets directly connected the protocol assigned the default gateway. We think that this means to the router that they are directly connected and so the packets can be delivered without other gateways in between. The only subnet not connected (the subnet of host-2-c) has a route in the table, that points to the interface eth2, and has an ip gateway that is the ip of the eth2 interface on router-2! That's all. Ah, we can see that we have two eth1 interfaces; that are in our opinion fictitious, in fact ethernet 1 is a trunk link, so that means that packets on this link must be tagged.  
+  - Output of the command **ifconfig** on router-1:  
+ ```
+ eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:20191 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4944 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:22791778 (22.7 MB)  TX bytes:433035 (433.0 KB)
+
+eth1      Link encap:Ethernet  HWaddr 08:00:27:a3:f5:33  
+          inet6 addr: fe80::a00:27ff:fea3:f533/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:24 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:1944 (1.9 KB)
+
+eth2      Link encap:Ethernet  HWaddr 08:00:27:41:ec:af  
+          inet addr:192.168.251.1  Bcast:0.0.0.0  Mask:255.255.255.252
+          inet6 addr: fe80::a00:27ff:fe41:ecaf/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:233 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:264 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:19690 (19.6 KB)  TX bytes:22176 (22.1 KB)
+
+eth1.11   Link encap:Ethernet  HWaddr 08:00:27:a3:f5:33  
+          inet addr:192.168.249.1  Bcast:0.0.0.0  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fea3:f533/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:648 (648.0 B)
+
+eth1.12   Link encap:Ethernet  HWaddr 08:00:27:a3:f5:33  
+          inet addr:192.168.250.1  Bcast:0.0.0.0  Mask:255.255.255.224
+          inet6 addr: fe80::a00:27ff:fea3:f533/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:648 (648.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+```
+## Router-2
+- Output of the command **route -nve** on router-1:
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.0.2.2        0.0.0.0         UG        0 0          0 eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U         0 0          0 eth0
+192.168.248.0   192.168.251.2   255.255.248.0   UG        0 0          0 eth2
+192.168.249.0   192.168.251.1   255.255.255.0   UG        0 0          0 eth2
+192.168.250.0   192.168.251.1   255.255.255.224 UG        0 0          0 eth2
+192.168.251.0   0.0.0.0         255.255.255.252 U         0 0          0 eth2
+192.168.252.0   0.0.0.0         255.255.255.252 U         0 0          0 eth1
+
+```
+- Output of the command **ifconfig** on router-1:  
+```
+eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:19641 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4206 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:22758492 (22.7 MB)  TX bytes:384497 (384.4 KB)
+
+eth1      Link encap:Ethernet  HWaddr 08:00:27:dc:ee:57  
+          inet addr:192.168.252.1  Bcast:0.0.0.0  Mask:255.255.255.252
+          inet6 addr: fe80::a00:27ff:fedc:ee57/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:648 (648.0 B)
+
+eth2      Link encap:Ethernet  HWaddr 08:00:27:56:af:94  
+          inet addr:192.168.251.2  Bcast:0.0.0.0  Mask:255.255.255.252
+          inet6 addr: fe80::a00:27ff:fe56:af94/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:247 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:258 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:20950 (20.9 KB)  TX bytes:21644 (21.6 KB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+```
+## Host-2-c
+
