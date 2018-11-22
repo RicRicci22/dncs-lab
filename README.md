@@ -678,7 +678,7 @@ lo        Link encap:Local Loopback
 
 ## Router-2
 
-- Output of the command **route -nve** on router-1:
+- Output of the command **route -nve** on router-2:
 ```
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
@@ -691,7 +691,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.252.0   0.0.0.0         255.255.255.252 U         0 0          0 eth1
 
 ```
-- Output of the command **ifconfig** on router-1:  
+- Output of the command **ifconfig** on router-2:  
 ```
 eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
           inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
@@ -731,4 +731,101 @@ lo        Link encap:Local Loopback
 
 ```
 ## Host-2-c
+This is the host where our webserver is deployed. We installed docker on it, that is a manager of the so called "containers". Containers are an abstraction at the app layer instead of VM that are an abstraction of the hardware. Multiple containers can run on the same machine and share the OS kernel with other containers. Containers take up less space than VMs. To build up a container you need a repository for the "images", that are used by docker to set up our container. We downloaded the image httpd:2.4 that is an image used to set up a container of an apache server. So on this host we have an apache server running in a docker container (the container use less than 3 Mbyte of memory!! Incredible!).  
+- The first useful command is:  
+```
+docker image ls 
+ ```
+ This command list all the docker images present in our docker environment. It will prompt this line
+ ```
+ REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+httpd               2.4                 2a51bb06dc8b        6 days ago          132MB
+ ```
+ As mentioned early this is the image that allow docker to create a container that runs an apache server.
+ - Another command:
+ ```
+docker container ls
+```
+This command display the list of containers running on the docker environment, in our case it prompts this below
+ ```
+ CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                  NAMES
+273d5a3a895c        httpd:2.4           "httpd-foreground"   3 hours ago         Up 3 hours          0.0.0.0:8080->80/tcp   SRwebserver
+```
+We can see that the server is listening for requests on the port 8080, considering them as http requests (that we know need tcp protocol for a reliable connection). 
+- A command to see the docker statistics:
+```
+docker stats
+```
+This command gives you some information about the percentage of cpu and memory used by every container, as well as the data in input and output. In our case it displays
+```
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+273d5a3a895c        SRwebserver         0.02%               2.387MiB / 237.7MiB   1.00%               1.3kB / 0B          6.86MB / 0B         0
+```
+After a curl from the host-1-a we retrieve this
+```
+CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT     MEM %               NET I/O             BLOCK I/O           PIDS
+273d5a3a895c        SRwebserver         0.02%               2.945MiB / 237.7MiB   1.24%               1.83kB / 907B       7.06MB / 0B         0
+
+```
+We see that data in output change from 0 to 907 bytes. In fact the server pushed in output the file requested, so this ratio has increase.
+- Output of the command **route -nve** on host-2-c:  
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.0.2.2        0.0.0.0         UG        0 0          0 eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U         0 0          0 eth0
+172.17.0.0      0.0.0.0         255.255.0.0     U         0 0          0 docker0
+192.168.248.0   192.168.252.1   255.255.248.0   UG        0 0          0 eth1
+192.168.252.0   0.0.0.0         255.255.255.252 U         0 0          0 eth1
+
+```
+- Output of the command **ifconfig** on host-2-c:  
+```
+docker0   Link encap:Ethernet  HWaddr 02:42:30:7c:82:ba  
+          inet addr:172.17.0.1  Bcast:172.17.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::42:30ff:fe7c:82ba/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:5 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:15 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:837 (837.0 B)  TX bytes:1186 (1.1 KB)
+
+eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:96927 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:21308 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:113698016 (113.6 MB)  TX bytes:1483861 (1.4 MB)
+
+eth1      Link encap:Ethernet  HWaddr 08:00:27:02:d1:51  
+          inet addr:192.168.252.2  Bcast:0.0.0.0  Mask:255.255.255.252
+          inet6 addr: fe80::a00:27ff:fe02:d151/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:14 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:616 (616.0 B)  TX bytes:1633 (1.6 KB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+veth323e421 Link encap:Ethernet  HWaddr aa:c8:8f:f3:bd:22  
+          inet6 addr: fe80::a8c8:8fff:fef3:bd22/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:5 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:23 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:907 (907.0 B)  TX bytes:1834 (1.8 KB)
+ 
+```
+## Final comments
+Here finish our project for the course of Design of Networks and Communication System, must say that we forked the repository from [dustnic/dncs-lab]. This project is powered by dustnic, that permit us to fork his files and expand it as a project. 
 
