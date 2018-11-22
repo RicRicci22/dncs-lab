@@ -14,6 +14,8 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [host1b.sh](#host1bsh)
   * [host2c.sh](#host2csh)
   * [switch.sh](#switchsh)
+  * [router1.sh](#router1sh)
+  * [router2.sh](#router2sh)
 * [How-to test](#how-to-test)  
   * [Switch test](#switch)
   * [Rouer-1 test](#router-1)
@@ -213,7 +215,7 @@ Host2c.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 4-5-6-7-8:** This lines download and install *docker*.  
+**Lines 4-5-6-7-8:** This lines download and install *docker*.  
 **Line 9:** We set `eth1`, the host interface, UP.  
 **Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-2-c eth1`.  
 **Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
@@ -223,7 +225,7 @@ Now we focus on the most important command in this file:
 
 ## switch.sh
 
-Host2c.sh contains this line:  
+Switch.sh contains this line:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive
@@ -245,13 +247,55 @@ Host2c.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 4-5-6-7-8:** This lines download and install *docker*.  
-**Line 9:** We set `eth1`, the host interface, UP.  
-**Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-2-c eth1`.  
-**Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
-**Line 12:** This command kills all containers if present, is useful if a user load the VM more than once.  
-**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server that listen for incoming requests on the port 8080. The web-server name is SRwebserver.  
-**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html` and create the file if it isn't present yet. This file is hosted in the right directory of our SRwebserver.
+**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments, while supporting multiple protocols and standards.
+**Line 6:** This command delete the bridge named 'switch' if present, is useful if a user load the VM more than once maybe after some updates.  
+**Line 7:** In this line we add a bridge called 'switch'.  
+**Line 8:** In this line we add `eth1` port to the 'switch' bridge.  
+**Line 9:** In this line we add `eth2` port to the 'switch' bridge. This port is tagged with tag=11 in fact it belongs to **A**,Vlan based, subnet.  
+**Line 10:** In this line we add `eth3` port to the 'switch' bridge. This port is tagged with tag=12 in fact it belongs to **B**,Vlan based, subnet.  
+**Lines 11 to 14:** We set `eth1`, `eth2`,`eth3` and `ocs-system`, the switch interface and the ovs system, UP.
+
+## Router1.sh
+
+Router1.sh contains this line:  
+
+```
+1 export DEBIAN_FRONTEND=noninteractive
+2 sudo su 
+3 apt-get update
+4 apt-get install -y tcpdump apt-transport-https ca-certificates curl software-properties-common --assume-yes --force-yes
+5 wget -O- https://apps3.cumulusnetworks.com/setup/cumulus-apps-deb.pubkey | apt-key add -
+6 add-apt-repository "deb [arch=amd64] https://apps3.cumulusnetworks.com/repos/deb $(lsb_release -cs) roh-3"
+7 apt-get update
+8 apt-get install -y frr --assume-yes --force-yes
+9 sysctl net.ipv4.ip_forward=1
+10 ip link set dev eth1 up
+11 ip link add link eth1 name eth1.11 type vlan id 11
+12 ip link add link eth1 name eth1.12 type vlan id 12
+13 ip link set dev eth1.11 up
+14 ip link set dev eth1.12 up
+15 ip link set dev eth2 up
+16 ip add add 192.168.251.1/30 dev eth2
+17 ip add add 192.168.249.1/24 dev eth1.11
+18 ip add add 192.168.250.1/27 dev eth1.12
+19 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
+20 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
+21 service frr restart
+22 vtysh -c 'conf t' -c 'router ospf' -c 'redistribute connected' -c 'exit' -c 'interface eth2' -c 'ip ospf area 0.0.0.0' -c 'exit' -c 'exit' -c 'write'
+
+```
+
+Now we focus on the most important command in this file:
+
+**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments, while supporting multiple protocols and standards.
+**Line 6:** This command delete the bridge named 'switch' if present, is useful if a user load the VM more than once maybe after some updates.  
+**Line 7:** In this line we add a bridge called 'switch'.  
+**Line 8:** In this line we add `eth1` port to the 'switch' bridge.  
+**Line 9:** In this line we add `eth2` port to the 'switch' bridge. This port is tagged with tag=11 in fact it belongs to **A**,Vlan based, subnet.  
+**Line 10:** In this line we add `eth3` port to the 'switch' bridge. This port is tagged with tag=12 in fact it belongs to **B**,Vlan based, subnet.  
+**Lines 11 to 14:** We set `eth1`, `eth2`,`eth3` and `ocs-system`, the switch interface and the ovs system, UP.
+
+## Router2.sh
 
 # How-to test 
 
