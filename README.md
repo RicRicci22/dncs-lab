@@ -297,6 +297,7 @@ Now we focus on the most important command in this file:
 
 ## Router2.sh
 
+
 # How-to test 
 
  - Install Virtualbox and Vagrant
@@ -321,7 +322,10 @@ host-1-b                  running (virtualbox)
 host-2-c                  running (virtualbox)
 
 ```
-Hopefully, this command will return  something like that. It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.
+Hopefully, this command will return  something like that. It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.  
+
+## Common part
+This part reports command that you can use in every VM with the same purposes.  
 - Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned folder and and type this commands:  
 Terminal 1 --> `vagrant ssh router-1`  
 Terminal 2 --> `vagrant ssh router-2`  
@@ -343,7 +347,7 @@ Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2
 In this piece of terminal you can see our last login, in your case, at the very first time you log into the VMs, this line will be omitted.  
  - When logged, get the superuser permission permanently running this command on every VM:  
  ```
- sudo su 
+sudo su 
  ```  
 This is useful to skip the keyword sudo in the next commands that needs the superuser permission.  
 - Another command that you might would use on every VM is the following:  
@@ -351,6 +355,11 @@ This is useful to skip the keyword sudo in the next commands that needs the supe
    ifconfig
   ```  
 It displays the list of Ethernet interfaces present in the host and their options such as the ip associated or whatever. In every subpart we report the output of code that occurs on our VMs.  
+- Having the list of ethernet interfaces you can use this command on one of these
+ ``` 
+   tcpdump -i interfaceName
+  ```  
+  This command allow to sniff the packets on an ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. 
 - Another command we want to discuss in the common section is this:  
   ``` 
   route -nve
@@ -366,7 +375,37 @@ From this host (and from host-1-b) we are able to retrieve a simple web-page fro
    curl 192.168.252.2:8080/index.html 
   ```  
 This command send a request for the file index.html on port 8080 of the web-server running on host-2-c. On host-2-c we configure the server to accept requests on this port and assume them as http requests. So the web-server will answer with the file, that will be printed on the terminal.  You must copy the code from line **!DOCTYPE html** to **/html** and paste it in an empty editor file. Save the file with the extension **.html**, then open it with a browser. After this steps you might be able to see a simple web-page containing our name, our numbers, and a title. It's simple because the only purpose of this page web is to prove that the web-server works properly.  
-- Here i report the output of **route -nve** on host-1-a 
+- Here i report the output of **ifconfig** of host-1-a  
+``` 
+eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
+          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:7625 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2001 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:8278493 (8.2 MB)  TX bytes:182913 (182.9 KB)
+
+eth1      Link encap:Ethernet  HWaddr 08:00:27:3b:1e:80  
+          inet addr:192.168.249.2  Bcast:0.0.0.0  Mask:255.255.255.0
+          inet6 addr: fe80::a00:27ff:fe3b:1e80/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:6 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:16 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:985 (985.0 B)  TX bytes:1264 (1.2 KB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+```  
+eth0 is the dummy interface that "link" our VM with the ethernet card of our PC.   eth1 is the interface that link the host with the switch. We can see the ip associated with this interface as well as the subnet-mask.  lo is a fictitious interface, that is, briefly, the localhost.  
+- Here i report the output of **route -nve** on host-1-a  
  ```  
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
@@ -375,7 +414,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.248.0   192.168.249.1   255.255.248.0   UG        0 0          0 eth1
 192.168.249.0   0.0.0.0         255.255.255.0   U         0 0          0 eth1
  ```  
-In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and subnet-mask. 
+In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and subnet-mask.  
 
 ## Switch
 
