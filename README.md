@@ -1,11 +1,11 @@
 # DNCS-LAB Assignment A.Y. 2018-2019
 
-Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communication System hosted by UniTN
+On this project works, as collaborators, Riccardo Ricci and Sergio Povoli for the curse of "Design of Networks and Communication Systems" hosted in UniTN. 
 
 ## Table of contents
 * [Requirements](#requirements)
 * [Network Map](#network-map)
-* [Our approach to project](#our-approach-to-project)  
+* [Our approach to project](#our-approach)  
   * [Subnetting](#subnetting)  
   * [Ip address assignment](#ip-address-assignment)
   * [Virtual Lans](#virtual-lans)
@@ -24,6 +24,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [Rouer-1 test](#router-1)
   * [Rouer-2 test](#router-2)
   * [Host-2-c Test](#host-2-c)
+ *  [Conclusions](#final-comments)
 
 # Requirements
  - 10GB disk storage
@@ -48,7 +49,7 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
         |  M  |                   +------------+             +------------+
         |  A  |                         |eth1                   eth1| 192.168.252.1/30
         |  N  |       192.168.249.1/24  |  eth1.11                  |
-        |  A  |       192.168.250.1/27  |  eth1.12                  | 192.168.252.2/30
+        |  A  |       192.168.250.1/27  |  eth1.12              eth1| 192.168.252.2/30
         |  G  |                         |                     +-----+----+
         |  E  |                         |eth1                 |          |
         |  M  |               +-------------------+           |          |
@@ -74,24 +75,24 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
         |                                                           |
         +-----------------------------------------------------------+
 
-# Our approach to project
+# Our approach 
 
 ## Subnetting
 We decided to split our network in 4 subnetworks, 2 of these are Vlan based.  
 The 4 networks are:  
--**A** The area that contains host-1-a and all the similar hosts in this subnet and the router-1 port. This is Vlan based.  
--**B** The area that contains host-1-b and all the similar hosts in this subnet and the router-1 port. This is Vlan based.  
--**C** The area that contains host-2-c and the router-2 port.  
--**D** The area that contains other router-1 port and other router-2 port.
+-**A**: area that contains host-1-a, other hosts 128 and the router-1 port (eth.11). This is Vlan based.  
+-**B**: area that contains host-1-b, other 23 hosts and the router-1 port (eth.12). This is Vlan based.  
+-**C**: area that contains host-2-c and the router-2 port (eth1).  
+-**D**: area that contains other router-1 port (eth2) and other router-2 port (eth2).
 
 ## Ip address assignment
-In this assignment our aim was to follow this requirement:  
+In this project our aim was to follow this requirement:  
 - Up to 130 hosts in the same subnet of host-1-a  
 - Up to 25 hosts in the same subnet of host-1-b  
 - Consume as few IP addresses as possible  
-For this reason we decided to assign this ip subnets:
+So we decided to assign this ip pools to the varius subnets:
 
-| Network |     Network Mask      | Available IPs |
+| Network |     Ip/Network Mask      | Available IPs |
 |:-------:|:---------------------:|:-------------:|
 |   **A** |   192.168.249.0/24    | (2^8)-2 = 254 |
 |   **B** |   192.168.250.0/27    | (2^5)-2 = 30  |
@@ -104,10 +105,10 @@ Where:
 - *M* is the bit dedicated to the host part [e.g. for the Network **A** id 32-24=8]. M belongs to Natural number.
 - *-2* is the the unavailable ip in any network. In fact every subnet has 2 dedicate ip, one for broadcast and one for network.  
 
-Whit this formula we decided all the subnets so that *N* is as close as possible to the requested ip number.
+Whit this formula we decided, for every subnet, how many bit in the ip reserve for the host and how many for the subnet. We chose to assign host ip bits (M) so that *N* is as close as possible to the requested ip numbers.
 
 ## Virtual Lans
-We decided to use vlans for the networks A and B. In fact, networks A and B are, hypothetically, on the same broadcast area. Using vlans we can split this area in two virtual subnets without adding any router. We decide to proceed like this because in the assignment, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a web-server located on host-2-c and retrieve a simple web page. 
+We decided to use vlans for the networks A and B. Using vlans we can split the switch in two virtual switches not linked one to another. We decide to proceed like this because in the assignment, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a web-server located on host-2-c and retrieve a simple web page. 
 We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same interface.
 
 | Network | VLan ID |
@@ -130,13 +131,13 @@ Now the Interface of the **B** Network is:
 | eth1      | `host-1-b` | None     | 192.168.250.2 |
 
 ## Vagrant File
-The vagrant File initialize all the necessary virtual machine and the link between the virtual machine. Now we will focused on this command line that it is present in all virtual machine initialization.  
+The vagrantfile initialize all the necessary virtual machine and the link between them. Now we will focus on this command line that is present in every virtual machine initialization.  
 `NameOfVM.vm.provision "shell", path: "NameOfFile.sh"`  
-Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] to runs any configured provisioner. Provisioner in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
+Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] that runs any configured provisioner. Provision in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
 
 ## host1a.sh
 
-Host1a.sh contains this line:  
+Host1a.sh contains this lines:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive  
@@ -152,14 +153,15 @@ Host1a.sh contains this line:
 
 Now we focus on the most important commands in this file:
 
-**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.  
+**Line 4:** We installed `curl`, an important command that five the possibility to transfer data of the web-page hosted in `host-2-c` that we will browse.  
+**Line 5:** We install `tcpdump`, a simple packet sniffer. A brief explanation is in the paragraph "how to test". 
 **Line 6:** We set `eth1`, the host interface, UP.  
 **Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-a eth1`.  
 **Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.249.1 the ip address of `eth1.11 router-1` interface.  
 
 ## host1b.sh
 
-Host1b.sh contains this line:  
+Host1b.sh contains this lines:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive
@@ -173,17 +175,12 @@ Host1b.sh contains this line:
 
 ```
 
-Now we focus on the most important commands in this file:
-
-**Line 4:** We installed `curl`, a very important command for have the possibility to transfer data of a web-page hosted in `host-2-c` that we will browse.  
-**Line 6:** We set `eth1`, the host interface, UP.  
-**Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-b eth1`.  
-**Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.250.1 the ip address of `eth1.12 router-1` interface.
+This code performs the same task as the code above in host-1-a, the only differences are the interfaces and the ip that in this case refers to the subnet B. 
 
 
 ## host2c.sh
 
-Host2c.sh contains this line:  
+Host2c.sh contains this lines:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive
@@ -221,16 +218,14 @@ Host2c.sh contains this line:
 Now we focus on the most important commands in this file:
 
 **Lines 4-5-6-7-8:** This lines download and install *docker*.  
-**Line 9:** We set `eth1`, the host interface, UP.  
-**Line 10:** In this line we assigned an IP address with properly subnet-mask to the `host-2-c eth1`.  
-**Line 11:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.252.1 the ip address of `eth1 router-2` interface.  
-**Line 12:** This command kills all containers if present, is useful if a user load the VM more than once.  
-**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server that listen for incoming requests on the port 8080. The web-server name is SRwebserver.  
-**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html` and create the file if it isn't present yet. This file is hosted in the right directory of our SRwebserver.
+**Line 9-10-11:** Same as above, but with interfaces and ip's referring to the subnet C.
+**Line 12:** This command kills all docker containers if present, is useful if a user reload the VM more than once (specially if he has done some modify to the project).  
+**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server named SRwebserver, that listen for incoming requests on the port 8080. 
+**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html`creating the file if not present, overwriting it if it already present. This file is hosted in the right directory of our SRwebserver.
 
 ## switch.sh
 
-Switch.sh contains this line:  
+Switch.sh contains this lines:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive
@@ -262,7 +257,7 @@ Now we focus on the most important commands in this file:
 
 ## Router1.sh
 
-Router1.sh contains this line:  
+Router1.sh contains this lines:  
 
 ```
 1 export DEBIAN_FRONTEND=noninteractive
@@ -828,4 +823,3 @@ veth323e421 Link encap:Ethernet  HWaddr aa:c8:8f:f3:bd:22
 ```
 ## Final comments
 Here finish our project for the course of Design of Networks and Communication System, must say that we forked the repository from [dustnic/dncs-lab]. This project is powered by dustnic, that permit us to fork his files and expand it as a project. 
-
