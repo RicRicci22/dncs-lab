@@ -315,11 +315,10 @@ Router2.sh contains this line:
 11 ip link set dev eth2 up
 12 ip add add 192.168.251.2/30 dev eth2
 13 ip add add 192.168.252.1/30 dev eth1
-14 ip route add 192.168.248.0/21 via 192.168.251.2
-15 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
-16 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
-17 service frr restart
-18 vtysh -c 'conf t' -c 'router ospf' -c 'redistribute connected' -c 'exit' -c 'interface eth2' -c 'ip ospf area 0.0.0.0' -c 'exit' -c 'exit' -c 'write'
+14 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
+15 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
+16 service frr restart
+17 vtysh -c 'conf t' -c 'router ospf' -c 'redistribute connected' -c 'exit' -c 'interface eth2' -c 'ip ospf area 0.0.0.0' -c 'exit' -c 'exit' -c 'write'
 
 ```
 
@@ -328,10 +327,10 @@ Now we focus on the most important commands in this file:
 **Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which
 includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF protocol and with this suite we are able to do this.  
 **Lines 10-11:** We set `eth1`,  `eth2`, the router interface, UP.  
-**Lines 12-13** In this lines we assign an IP address with properly subnet-mask to the `router-1 eth1`, `router-1 eth2`.  
-**Lines 15-16:** In this line we automatically modify the /etc/frr/frr.daemon without open the vim editor. We active the Zebra daemon and the Ospfd daemon. In this manner the router-1 works with OSPF protocol.  
-**Line 17:** We restart frr for update the new configuration.  
-**Line 18:** With this lines we automatically modify the /etc/frr//frr.conf. It is a sequence of vtysh command that configure router to work correctly with a proper ospf area and other ospf option. In fact, vtysh provides an environment where the users are able to manage daemons  
+**Lines 12-13** In this lines we assign an IP address with properly subnet-mask to the `router-2 eth1`, `router-2 eth2`.  
+**Lines 14-15:** In this line we automatically modify the **/etc/frr/frr.daemon** without open the vim editor. We active the Zebra daemon and the Ospfd daemon. In this manner the router-1 works with OSPF protocol.  
+**Line 16:** We restart frr for update the new configuration.  
+**Line 17:** With this lines we automatically modify the **/etc/frr//frr.conf**. It is a sequence of vtysh command that configure router to work correctly with a proper ospf area and other ospf option. In fact, vtysh provides an environment where the users are able to manage daemons  
 
 # How-to test 
 
