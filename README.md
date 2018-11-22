@@ -287,10 +287,11 @@ Router1.sh contains this line:
 
 Now we focus on the most important command in this file:
 
-**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments, while supporting multiple protocols and standards.  
-**Line 6:** This command delete the bridge named 'switch' if present, is useful if a user load the VM more than once maybe after some updates.  
-**Line 7:** In this line we add a bridge called 'switch'.  
-**Line 8:** In this line we add `eth1` port to the 'switch' bridge.  
+**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which
+includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routinig between two router. We choose to use OSPF protocol and with this suite we are able to do this.  
+**Lines 10-13-14-15:** We set `eth1`,  `eth1.11`,  `eth1.12`,  `eth2`, the router interface, UP.  
+**Line 12:** In this line we add a bridge called 'switch'.  
+**Line 13:** In this line we add `eth1` port to the 'switch' bridge.  
 **Line 9:** In this line we add `eth2` port to the 'switch' bridge. This port is tagged with tag=11 in fact it belongs to **A**, Vlan based, subnet.  
 **Line 10:** In this line we add `eth3` port to the 'switch' bridge. This port is tagged with tag=12 in fact it belongs to **B**, Vlan based, subnet.  
 **Lines 11 to 14:** We set `eth1`, `eth2`, `eth3` and `ocs-system`, the switch interface and the ovs system, UP.
