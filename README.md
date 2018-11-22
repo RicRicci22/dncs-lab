@@ -17,9 +17,13 @@ Project by Riccardo Ricci and Sergio Povoli for Design of Networks and Communica
   * [router1.sh](#router1sh)
   * [router2.sh](#router2sh)
 * [How-to test](#how-to-test)  
-  * [Host-1-a test](#host-1-a)
-  * [Switch test](#switch)
+  * [Common Part Test](#common-part)
+  * [Host-1-a Test](#host-1-a)
+  * [Host-1-b Test](#host-1-b)
+  * [Switch Test](#switch)
   * [Rouer-1 test](#router-1)
+  * [Rouer-2 test](#router-2)
+  * [Host-2-c Test](#host-2-c)
 
 # Requirements
  - 10GB disk storage
@@ -388,22 +392,22 @@ This is useful to skip the keyword sudo in the next commands that needs the supe
    ifconfig
   ```  
 It displays the list of Ethernet interfaces present in the host and their options such as the ip associated or whatever. In every subpart we report the output of code that occurs on our VMs.  
-- Having the list of ethernet interfaces you can use this command on one of these
+- Having the list of Ethernet interfaces you can use this command on one of these
  ``` 
    tcpdump -i interfaceName
   ```  
-  This command allow to sniff the packets on an ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. After the execution of this command, every information of packets passing trought the interface will be displayed, such as the protocol at level four the packet belongs and other informations. 
+  This command allow to sniff the packets on an Ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. After the execution of this command, every information of packets passing trought the interface will be displayed, such as the protocol at level four the packet belongs and other informations. 
 - Another command we want to discuss in the common section is this:  
   ``` 
   route -nve
   ```  
-This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the netmask (here called genmask) and the gateway. In every subpart we report the output of code that occurs on our VMs.  
+This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the net-mask (here called genmask) and the gateway. In every subpart we report the output of code that occurs on our VMs.  
 
 Ok, here finishes the common section so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart commands that allows you, from host-1-a and host-1-b, to retrieve a web-page from host-2-c, we describe commands in the switch and routers to verify that some functions such as ospf are running properly.  
 ## Host-1-a  
 At this point you must be logged into the VM of host-1-a as a superuser with the command shown below. The principal commands of host-1-a are the same of host-1-b so I omit to discuss of either host-1-a and host-1-b and discuss only the first, the same commands can run, with the same purposes, on host-1-b.  
 From this host (and from host-1-b) we are able to retrieve a simple web-page from a web-server apache running on host-2-c. We decided to install from shell files the functionality **curl**, that permit, among other tasks, to make requests on specific ports. Here's how:  
- - If you want get the webpage you have to put this command in the terminal:
+ - If you want get the web-page you have to put this command in the terminal:
  ``` 
    curl 192.168.252.2:8080/index.html 
   ```  
@@ -437,7 +441,7 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0 
           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 ```  
-eth0 is the dummy interface that "link" our VM with the ethernet card of our PC.   eth1 is the interface that link the host with the switch. We can see the ip associated with this interface as well as the subnet-mask.  lo is a fictitious interface, that is, briefly, the localhost.  
+eth0 is the dummy interface that "link" our VM with the Ethernet card of our PC.   eth1 is the interface that link the host with the switch. We can see the ip associated with this interface as well as the subnet-mask.  lo is a fictitious interface, that is, briefly, the local-host.  
 - Here i report the output of **route -nve** on host-1-a  
  ```  
 Kernel IP routing table
@@ -447,7 +451,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.248.0   192.168.249.1   255.255.248.0   UG        0 0          0 eth1
 192.168.249.0   0.0.0.0         255.255.255.0   U         0 0          0 eth1
  ```  
-In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and mask.  
+In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinate to other subnets. Fourth line refers to the subnet ip and mask.  
 ## Host-1-b
 - Output of **ifconfig** performed on host-1-a  
 ``` 
@@ -501,7 +505,7 @@ The first command is this:
   ``` 
    ovs-vsctl list-ports switch
    ```  
-This command show all the ethernet interfaces related to the bridge chosen. In our case the only bridge is our "switch". The output must be  
+This command show all the Ethernet interfaces related to the bridge chosen. In our case the only bridge is our "switch". The output must be  
   ```
   eth1
   eth2
@@ -529,7 +533,7 @@ Bridge switch
         Interface "eth3"  
  ovs_version: "2.0.2"
 ```
-This command sintetize the previus 2 commands. Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated to a VLAN. Moreover, it is displayed the version of open vSwitch installed onto the machine.  
+This command sensitize the previews 2 commands. Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated to a VLAN. Moreover, it is displayed the version of open vSwitch installed onto the machine.  
 - Output of the command **ifconfig** on switch:  
 ```
 - eth0    Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
@@ -589,8 +593,8 @@ switch    Link encap:Ethernet  HWaddr 08:00:27:2a:4e:77
           TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
           collisions:0 txqueuelen:0 
           RX bytes:1296 (1.2 KB)  TX bytes:648 (648.0 B)
+```
 
-  ```
 ## Router-1
 
 Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1. Commands for router-2 are the same. Even here, like the switch, all the commands that we're about to list are for gather informations about the services running on our router. 
@@ -603,7 +607,7 @@ The first command we want to talk about is:
   * zebra is running
   * ospfd is running
   ```  
-  This means that on our router, are running 2 daemons. We don't know much about this two daemons, but togheter, they permit the **ospf** routing protocol. Zebra delivers informations between routers involved in the protocol, to permit all the routers to gather the informations of the net topology and permit the redaction of the route table, performed we tought by the ospfd daemon (but we are not sure). 
+  This means that on our router, are running 2 daemons. We don't know much about this two daemons, but together, they permit the **ospf** routing protocol. Zebra delivers informations between routers involved in the protocol, to permit all the routers to gather the informations of the net topology and permit the redaction of the route table, performed we tought by the ospfd daemon (but we are not sure). 
   - Output of the command **route -nve** on router-1:  
  ```
  Kernel IP routing table
@@ -615,7 +619,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.251.0   0.0.0.0         255.255.255.252 U         0 0          0 eth2
 192.168.252.0   192.168.251.2   255.255.255.252 UG        0 0          0 eth2
 ```  
-This table is a lot informative! This table is automatically compiled by the ospf protocol. We can see that to the subnets directly connected the protocol assigned the default gateway. We think that this means to the router that they are directly connected and so the packets can be delivered without other gateways in between. The only subnet not connected (the subnet of host-2-c) has a route in the table, that points to the interface eth2, and has an ip gateway that is the ip of the eth2 interface on router-2! That's all. Ah, we can see that we have two eth1 interfaces; that are in our opinion fictitious, in fact ethernet 1 is a trunk link, so that means that packets on this link must be tagged.  
+This table is a lot informative! This table is automatically compiled by the ospf protocol. We can see that to the subnets directly connected the protocol assigned the default gateway. We think that this means to the router that they are directly connected and so the packets can be delivered without other gateways in between. The only subnet not connected (the subnet of host-2-c) has a route in the table, that points to the interface eth2, and has an ip gateway that is the ip of the eth2 interface on router-2! That's all. Ah, we can see that we have two eth1 interfaces; that are in our opinion fictitious, in fact Ethernet 1 is a trunk link, so that means that packets on this link must be tagged.  
   - Output of the command **ifconfig** on router-1:  
  ```
  eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
@@ -671,7 +675,9 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0 
           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 ```
+
 ## Router-2
+
 - Output of the command **route -nve** on router-1:
 ```
 Kernel IP routing table
