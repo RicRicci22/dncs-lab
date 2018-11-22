@@ -332,40 +332,50 @@ Terminal 6 --> `vagrant ssh host-2-c`
 
 This commands allow to log in into the VM's, every login must return the same message (because all VM's are Ubuntu Machines). The message is the following:
 
-***Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)***  
-***Documentation:  https://help.ubuntu.com/***  
- ***Development Environment***  
-***Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2***  
-***[08:22:11 vagrant@router-1:~] $***
+```
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.16.0-55-generic x86_64)  
+Documentation:  https://help.ubuntu.com/  
+  * Development Environment  
+Last login: Wed Nov 21 05:39:35 2018 from 10.0.2.2
+[08:22:11 vagrant@router-1:~] $
+```
  
- In this piece of terminal you can see our last login, in your case, at the very first time you log in, this line will be omitted.
- Ok, here finishes the common part, so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart from how to use host-1-a and host-1-b, that are the hosts from where you are able to retrieve a web-page from host-2-c, we describe commands in switch and in the routers to verify that some functions such as ospf are running properly.
- 
-  - When logged, get the superuser permission permanently running this command on every VM: 
+In this piece of terminal you can see our last login, in your case, at the very first time you log into the VMs, this line will be omitted.  
+ - When logged, get the superuser permission permanently running this command on every VM:  
  ```
  sudo su 
- ```
- This is useful to skip the keyword sudo in the next commands that needs the superuser permission. 
-## Host-1-a
- At this point you must be logged into the VM of host-1-a as a superuser with the command shown below. The principal commands of host-1-a are the same of host-1-b so I omit to discuss of either host-1-a and host-1-b and discuss only the first, the same command can run, with the same purposes, on host-1-b. 
- From this host (and from host-1-b) we are able to retrieve a simple web-page from a web-server apache running on host-2-c. We decided to install from shell files the functionality curl, that permit, among other tasks, to make requests on specific ports on a server. Here's how:
- - first of all put this command in the terminal 
-  ``` 
-   curl 192.168.252.2:8080/index.html 
-  ```
-This command send an http request for the file index.html on port 8080 of the web-server running on host-2-c, on host-2-c we configure the server to accept requests on this port and assume them as http requests. So the web-server will answer with the file, that will be printed on the terminal. You must copy the code from the line  <!DOCTYPE html> to </html> and paste it in an empty editor file. Save the file with a name and the extension .html, then open it with a browser. After this steps you might be able to see a simple web-page containing our name, our numbers, and a simple title. It's simple because the only purpose of this page web is to prove that the web-server works properly. 
-
-Another command that you might would use is this:
+ ```  
+This is useful to skip the keyword sudo in the next commands that needs the superuser permission.  
+- Another command that you might would use on every VM is the following:  
   ``` 
    ifconfig
-  ```
-  This command displays the list of Ethernet interfaces, and their options such as the ip associated or whatever, present in the host. It will show an eth1 that is the interface linked with the switch with its ip address, eth0 that is the pseudo-interface from whom the virtual machine deal with our net-card and a loop-back interface, that is, in practice, the localhost of the VM. 
-  
-  The last command we want to talk about in host-1-a is this:
+  ```  
+It displays the list of Ethernet interfaces present in the host and their options such as the ip associated or whatever. In every subpart we report the output of code that occurs on our VMs.  
+- Another command we want to discuss in the common section is this:  
   ``` 
   route -nve
-  ```
-  This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the net-mask (here called gen-mask) and the gateway. In this case we have add a static route, that send packet destinate to every other subnet to the gateway (the router-1 eth1 interface ip). This is visible in the third line of the table.
+  ```  
+This command show on the terminal the routing table of the virtual machine. Reading the table is pretty easy, we have the destination and the netmask (here called genmask) and the gateway. In every subpart we report the output of code that occurs on our VMs.  
+
+Ok, here finishes the common section so, starting from this point, we will divide the rest of this paragraph in six subparts, everyone of them referring to how to use a specific VM (host-1-a router-1 router-2 host-2-c). Apart commands that allows you, from host-1-a and host-1-b, to retrieve a web-page from host-2-c, we describe commands in the switch and routers to verify that some functions such as ospf are running properly.  
+## Host-1-a  
+At this point you must be logged into the VM of host-1-a as a superuser with the command shown below. The principal commands of host-1-a are the same of host-1-b so I omit to discuss of either host-1-a and host-1-b and discuss only the first, the same commands can run, with the same purposes, on host-1-b.  
+From this host (and from host-1-b) we are able to retrieve a simple web-page from a web-server apache running on host-2-c. We decided to install from shell files the functionality **curl**, that permit, among other tasks, to make requests on specific ports. Here's how:  
+ - If you want the webpage you have to put this command in the terminal  
+ ``` 
+   curl 192.168.252.2:8080/index.html 
+  ```  
+This command send a request for the file index.html on port 8080 of the web-server running on host-2-c. On host-2-c we configure the server to accept requests on this port and assume them as http requests. So the web-server will answer with the file, that will be printed on the terminal.  You must copy the code from line **!DOCTYPE html** to **/html** and paste it in an empty editor file. Save the file with the extension **.html**, then open it with a browser. After this steps you might be able to see a simple web-page containing our name, our numbers, and a title. It's simple because the only purpose of this page web is to prove that the web-server works properly.  
+- Here i report the output of **route -nve** on host-1-a 
+ ```  
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+0.0.0.0         10.0.2.2        0.0.0.0         UG        0 0          0 eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U         0 0          0 eth0
+192.168.248.0   192.168.249.1   255.255.248.0   UG        0 0          0 eth1
+192.168.249.0   0.0.0.0         255.255.255.0   U         0 0          0 eth1
+ ```  
+In this case we set up a static route, visible in the third line of the table, that permit the delivery of packets destinated to other subnets. Fourth line refers to the subnet ip and subnet-mask. 
 
 ## Switch
 
@@ -374,51 +384,50 @@ The first command is this:
   ``` 
    ovs-vsctl list-br
   ```
-  This command show on the terminal a list of all the bridges present in the VM. But what are bridges? In these case we refer to a bridge as a switch, so we can say that it's a list of all the switches present. If this command is run inside this VM, the feedback must be:
- ***switch*** 
-  That is in fact the only bridge that we create inside this VM.
-  
-  Another command, similar to this immediately above is:
-    
-``` 
+  This command show on the terminal a list of all the bridges present in the VM. But what are bridges? In these case we refer to a bridge as a switch, so we can say that it's a list of all the switches present. If this command is run inside this VM, the feedback must be:  
+   ```switch``` 
+  That is in fact the only bridge that we create inside this VM.  
+  Another command, similar to this immediately above is:  
+  ``` 
    ovs-vsctl list-ports switch
-   ```
-  
- This command show all the ports related to the switch. The output must be
-  ***eth1
+   ```  
+This command show all the ports related to the switch. The output must be  
+  ```
+  eth1
   eth2
-  eth3***
-  Two ports connected to the hosts 1-a and 1-b and a port connected witch router-1.
+  eth3
+  ```  
+  Two ports connected to the hosts 1-a and 1-b and a port connected witch router-1.  
   
   For a deeply description of ports on the switch you must run this command:
   ``` 
    ovs-vsctl show
    ```
    After the execution of this command, the output must be:
-     
-***Bridge switch*** 
-    ***Port "eth1"***  
-        ***Interface "eth1"***  
-    ***Port switch***  
-        ***Interface switch***  
-        ***type: internal***  
-    ***Port "eth2"***  
-        ***tag: 11***  
-        ***Interface "eth2"***  
-    ***Port "eth3"***  
-        ***tag: 12***  
-        ***Interface "eth3"***  
-***ovs_version: "2.0.2"***
-    
-Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the version of open vSwitch installed onto the machine.  
+   ```     
+Bridge switch 
+    Port "eth1"  
+        Interface "eth1"  
+    Port switch  
+        Interface switch  
+        type: internal  
+    Port "eth2"  
+        tag: 11  
+        Interface "eth2"  
+    Port "eth3"  
+        tag: 12  
+        Interface "eth3"  
+ ovs_version: "2.0.2"
+```
+Ports are displayed with their name, their associated interface and their tag, that means that it is a port associated with a VLAN. Moreover, it is displayed the versione of open vSwitch installed onto the machine.  
   
 ## Router-1
 
-  Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1. Commands for router-2 are the same. Even here, like the switch, all the commands that we're about to list are for gather informations about the services running on our router. 
-  The first command we wanna talk about is this:
-  ``` 
-  service frr status
+Commands shown here, just like in host-1-a, are the same for router-2, so we describe router-1. Commands for router-2 are the same. Even here, like the switch, all the commands that we're about to list are for gather informations about the services running on our router. 
+The first command we wanna talk about is this:
   ```
-  The output must be 
+  service frr status
+  `` `
+   The output must be 
   ***zebra is running
   ospfd is running***
