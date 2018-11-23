@@ -1,8 +1,9 @@
 # DNCS-LAB Assignment A.Y. 2018-2019
 
-On this project works, as collaborators, Riccardo Ricci and Sergio Povoli for the curse of "Design of Networks and Communication Systems" hosted in UniTN. 
+On this project works, as collaborators, Riccardo Ricci and Sergio Povoli for the course of "Design of Networks and Communication Systems" hosted in UniTN. 
 
 ## Table of contents
+* [Assigment](#assigment)
 * [Requirements](#requirements)
 * [Network Map](#network-map)
 * [Our approach to project](#our-approach)  
@@ -24,7 +25,15 @@ On this project works, as collaborators, Riccardo Ricci and Sergio Povoli for th
   * [Rouer-1 test](#router-1)
   * [Rouer-2 test](#router-2)
   * [Host-2-c Test](#host-2-c)
- *  [Conclusions](#final-comments)
+*  [Conclusions](#final-comments)
+
+# Assigment
+This is the project Assigment:  
+Based the Vagrantfile and the provisioning scripts available at: https://github.com/dustnic/dncs-lab the candidate is required to design a functioning network where any host configured and attached to router-1 (through switch) can browse a website hosted on host-2-c.  
+The sub-netting needs to be designed to accommodate the following requirement:  
+- Up to 130 hosts in the same subnet of host-1-a  
+- Up to 25 hosts in the same subnet of host-1-b  
+- Consume as few IP addresses as possible  
 
 # Requirements
  - 10GB disk storage
@@ -90,7 +99,7 @@ In this project our aim was to follow this requirement:
 - Up to 130 hosts in the same subnet of host-1-a  
 - Up to 25 hosts in the same subnet of host-1-b  
 - Consume as few IP addresses as possible  
-So we decided to assign this ip pools to the varius subnets:
+So we decided to assign this ip pools to the various subnets:
 
 | Network |     Ip/Network Mask      | Available IPs |
 |:-------:|:---------------------:|:-------------:|
@@ -153,9 +162,9 @@ Host1a.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 4:** We installed `curl`, an important command that five the possibility to transfer data from the web-server hosted in `host-2-c`.  
-**Line 5:** We install `tcpdump`, a simple packet sniffer. A brief explanation is in the paragraph "how to test". 
-**Line 6:** We set `eth1`, the host interface to the switch, UP.  
+**Line 4:** We installed `curl`, an important command that five the possibility to transfer data of the web-page hosted in `host-2-c` that we will browse.  
+**Line 5:** We install `tcpdump`, a simple packet sniffer. A brief explanation is in the paragraph [how to test](#how-to-test).   
+**Line 6:** We set `eth1`, the host interface, UP.  
 **Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-a eth1`.  
 **Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.249.1 the ip address of `eth1.11 router-1` interface.  
 
@@ -602,7 +611,7 @@ The first command we want to talk about is:
   * zebra is running
   * ospfd is running
   ```  
-  This means that on our router, are running 2 daemons. We don't know much about this two daemons, but together, they permit the **ospf** routing protocol. Zebra delivers informations between routers involved in the protocol, to permit all the routers to gather the informations of the net topology and permit the redaction of the route table, performed we tought by the ospfd daemon (but we are not sure). 
+  This means that on our router, are running 2 daemons. We don't know much about this two daemons, but together, they permit the **ospf** routing protocol. Zebra delivers informations between routers involved in the protocol, to permit all the routers to gather the informations of the net topology and permit the redaction of the route table, performed we tough by the ospfd daemon (but we are not sure). 
   - Output of the command **route -nve** on router-1:  
  ```
  Kernel IP routing table
@@ -726,7 +735,7 @@ lo        Link encap:Local Loopback
 
 ```
 ## Host-2-c
-This is the host where our webserver is deployed. We installed docker on it, that is a manager of the so called "containers". Containers are an abstraction at the app layer. They are different from VM that are an abstraction of the hardware. Multiple containers can run on the same machine and share the OS kernel with other containers. Containers take up less space than VMs. To build up a container you need a repository for the "images", that are used by docker to set up our container. We downloaded the image httpd:2.4 that is an image used to set up a container of an apache server. So on this host we have an apache server running in a docker container (the container use less than 3 Mbyte of memory!! Incredible!).  
+This is the host where our webserver is deployed. We installed docker on it, that is a manager of the so called "containers". Containers are an abstraction at the app layer instead of VM that are an abstraction of the hardware. Multiple containers can run on the same machine and share the OS kernel with other containers. Containers take up less space than VMs. To build up a container you need a repository for the "images", that are used by docker to set up our container. We downloaded the image httpd:2.4 that is an image used to set up a container of an apache server. So on this host we have an apache server running in a docker container (the container use less than 3 Mbyte of memory).  
 - The first useful command is:  
 ```
 docker image ls 
