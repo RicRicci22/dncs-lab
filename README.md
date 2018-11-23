@@ -108,10 +108,10 @@ Where:
 Whit this formula we decided, for every subnet, how many bit in the ip reserve for the host and how many for the subnet. We chose to assign host ip bits (M) so that *N* is as close as possible to the requested ip numbers.
 
 ## Virtual Lans
-We decided to use vlans for the networks A and B. Using vlans we can split the switch in two virtual switches not linked one to another. We decide to proceed like this because in the assignment, either the virtual subnet containing host-1-a and the one containing host-1-b must be able to reach a web-server located on host-2-c and retrieve a simple web page. 
+We decided to use vlans for the networks A and B. Using vlans we can split the switch in two virtual switches. We decide to proceed like this because in the assignment, the virtual subnet containing host-1-a and the one containing host-1-b must be separated in terms of broadcasts area on the switch.
 We setup the switch interface linked to the router in trunk mode, in order to simultaneously manage the traffic coming from 2 distinct vlans on the same interface.
 
-| Network | VLan ID |
+| Network | VLan TAG |
 |:-------:|:-------:|
 | **A**   | 11      |
 | **B**   | 12      |  
@@ -131,9 +131,9 @@ Now the Interface of the **B** Network is:
 | eth1      | `host-1-b` | None     | 192.168.250.2 |
 
 ## Vagrant File
-The vagrantfile initialize all the necessary virtual machine and the link between them. Now we will focus on this command line that is present in every virtual machine initialization.  
+The vagrantfile initialize all the necessary virtual machine and the link between them. Now we will focus on this command line that is present in every virtual machine initialization in the Vagrantfile.  
 `NameOfVM.vm.provision "shell", path: "NameOfFile.sh"`  
-Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] that runs any configured provisioner. Provision in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
+Every virtual machine [*NameofVM*] has a specific file [*NameOfFile*] that runs any configured provisioner. Provision in Vagrant allow you to automatically install software, and configure the machines as part of the `vagrant up` process. For this reason the *NameOfFile.sh* is a scrip that contain all the specific commands to configure our different VMs.
 
 ## host1a.sh
 
@@ -153,9 +153,9 @@ Host1a.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 4:** We installed `curl`, an important command that five the possibility to transfer data of the web-page hosted in `host-2-c` that we will browse.  
+**Line 4:** We installed `curl`, an important command that five the possibility to transfer data from the web-server hosted in `host-2-c`.  
 **Line 5:** We install `tcpdump`, a simple packet sniffer. A brief explanation is in the paragraph "how to test". 
-**Line 6:** We set `eth1`, the host interface, UP.  
+**Line 6:** We set `eth1`, the host interface to the switch, UP.  
 **Line 7:** In this line we assigned an IP address with properly subnet-mask to the `host-1-a eth1`.  
 **Line 8:** We assigned a static route for all the packet with 192.168.248.0/21 destination. This destination includes all the other subnets in this project. All packet with 192.168.248.0/21 destination goes to the 192.168.249.1 the ip address of `eth1.11 router-1` interface.  
 
@@ -199,19 +199,21 @@ Host2c.sh contains this lines:
 14 docker run -dit --name SRwebserver -p 8080:80 -v /home/user/website/:/usr/local/apache2/htdocs/ httpd:2.4
 15 
 16 echo "<!DOCTYPE html>
-17 <html lang="en">
-18 <head>
-19     <meta charset="UTF-8">
-20     <title>Pagina web di Sergio e Riccardo</title>
-21 </head>
-22 <body>
-23     <h1 style='color: #5e9ca0;'>HI, THIS IS A DEMO WEBPAGE&nbsp;</h1>
-24     <h2 style='color: #2e6c80;'>Creators:</h2>
-25   <p>- Riccardo Ricci -- 181398</p>
-26   <p>- Sergio Povoli -- 185790</p>
-27   <p><strong>&nbsp;</strong></p>   
-28 </body>
-29 </html>" > /home/user/website/index.html
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagina web di Sergio e Riccardo</title>
+</head>
+<body>
+    <h1 style='color: #5e9ca0;'>HI, THIS IS A DEMO WEBPAGE&nbsp;</h1>
+    <h2 style='color: #2e6c80;'>Something silly:</h2>
+        <p>  Something silly </p>
+    <h2 style='color: #2e6c80;'>Creators:</h2>
+	<p>- Riccardo Ricci -- 181398</p>
+	<p>- Sergio Povoli -- 185790</p>
+	<p><strong>&nbsp;</strong></p>   
+</body>
+</html>" > /home/user/website/index.html
 
 ```
 
@@ -221,7 +223,7 @@ Now we focus on the most important commands in this file:
 **Line 9-10-11:** Same as above, but with interfaces and ip's referring to the subnet C.
 **Line 12:** This command kills all docker containers if present, is useful if a user reload the VM more than once (specially if he has done some modify to the project).  
 **Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server named SRwebserver, that listen for incoming requests on the port 8080. 
-**Lines 16 to 29:** With this command we insert a simple html code in a file called `index.html`creating the file if not present, overwriting it if it already present. This file is hosted in the right directory of our SRwebserver.
+**Lines 16 to 29:** With the command echo we insert a simple html code in a file called `index.html`creating the file if not present, overwriting it if it is already present. This file is hosted in the right directory of our SRwebserver.
 
 ## switch.sh
 
@@ -247,13 +249,13 @@ Switch.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments, while supporting multiple protocols and standards.
+**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments.
 **Line 6:** This command delete the bridge named 'switch' if present, is useful if a user load the VM more than once maybe after some updates.  
 **Line 7:** In this line we add a bridge called 'switch'.  
 **Line 8:** In this line we add `eth1` port to the 'switch' bridge.  
 **Line 9:** In this line we add `eth2` port to the 'switch' bridge. This port is tagged with tag=11 in fact it belongs to **A**,Vlan based, subnet.  
 **Line 10:** In this line we add `eth3` port to the 'switch' bridge. This port is tagged with tag=12 in fact it belongs to **B**,Vlan based, subnet.  
-**Lines 11 to 14:** We set `eth1`, `eth2`,`eth3` and `ocs-system`, the switch interface and the ovs system, UP.
+**Lines 11 to 14:** We set `eth1`, `eth2`,`eth3` and `ocs-system`, the switch interfaces and the ovs system, UP.
 
 ## Router1.sh
 
@@ -287,14 +289,14 @@ Router1.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which
-includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF protocol and with this suite we are able to do this.  
+**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF.
+**Line 9:** This line set up the forwarding in the router. It must to be set to 1 if you want the router works properly.
 **Lines 10-13-14-15:** We set `eth1`,  `eth1.11`,  `eth1.12`,  `eth2`, the router interface, UP.  
-**Line 11-12:** In this line we add add links `eth1.11` and `eth1.12`. This 2 link si Vlan type and respectively has id 11 and id 12.  
-**Lines 16-17-18** In this lines we assign an IP address with properly subnet-mask to the `router-1 eth1`, `router-1 eth1.11`, `router-1 eth1.12`.  
+**Line 11-12:** In this line we add add links `eth1.11` and `eth1.12`. This 2 links are Vlan type and respectively has id 11 and 12.  
+**Lines 16-17-18** In this lines we assign IP addresses with properly subnet-masks to `router-1 eth1`, `router-1 eth1.11`, `router-1 eth1.12`.  
 **Lines 19-20:** In this line we automatically modify the /etc/frr/frr.daemon without open the vim editor. We active the Zebra daemon and the Ospfd daemon. In this manner the router-1 works with OSPF protocol.  
-**Line 21:** We restart frr for update the new configuration.  
-**Line 22:** With this lines we automatically modify the /etc/frr//frr.conf. It is a sequence of vtysh command that configure router to work correctly with a proper ospf area and other ospf option. In fact, vtysh provides an environment where the users are able to manage daemons  
+**Line 21:** We restart frr to update the new configuration.  
+**Line 22:** With this lines we automatically modify the /etc/frr//frr.conf. It is a sequence of vtysh command that configure router to work correctly with a proper ospf area and other ospf option. In fact, vtysh provides an environment where the users are able to manage daemons.
 
 ## Router2.sh
 
@@ -317,19 +319,14 @@ Router2.sh contains this line:
 14 sed -i "s/\(zebra *= *\). */\1yes/" /etc/frr/daemons
 15 sed -i "s/\(ospfd *= *\). */\1yes/" /etc/frr/daemons
 16 service frr restart
-17 vtysh -c 'conf t' -c 'router ospf' -c 'redistribute connected' -c 'exit' -c 'interface eth2' -c 'ip ospf area 0.0.0.0' -c 'exit' -c 'exit' -c 'write'
+17 vtysh -c 'conf t' -c 'router ospf' -c , while supporting multiple protocols and standards.1 and id 12'redistribute connected' -c 'exit' -c 'interface eth2' -c 'ip ospf area 0.0.0.0' -c 'exit' -c 'exit' -c 'write'
 
 ```
 
 Now we focus on the most important commands in this file:
 
-**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which
-includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF protocol and with this suite we are able to do this.  
 **Lines 10-11:** We set `eth1`,  `eth2`, the router interface, UP.  
-**Lines 12-13** In this lines we assign an IP address with properly subnet-mask to the `router-2 eth1`, `router-2 eth2`.  
-**Lines 14-15:** In this line we automatically modify the **/etc/frr/frr.daemon** without open the vim editor. We active the Zebra daemon and the Ospfd daemon. In this manner the router-1 works with OSPF protocol.  
-**Line 16:** We restart frr for update the new configuration.  
-**Line 17:** With this lines we automatically modify the **/etc/frr//frr.conf**. It is a sequence of vtysh command that configure router to work correctly with a proper ospf area and other ospf option. In fact, vtysh provides an environment where the users are able to manage daemons  
+**Lines 12-13** In this lines we assign IP addresses with properly subnet-masks to the `router-2 eth1`, `router-2 eth2`.  Here we don't have VLAN based interfaces. 
 
 # How-to test 
 
@@ -341,10 +338,13 @@ includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we ch
 cd dncs-lab
 ~/dncs-lab$ vagrant up --provision
 ```
-Once you launch the vagrant script, it may take a while for the entire topology to become available. We choose to include the option --provision because, with our pc's, when we omit this option, all commands in the shell files become invisible to vagrant, so the virtual machines don't work. Don't worry if, while vagrant is setting up virtual machine, appears on the screen some red lines, it will be fine. 
+Once you launch the vagrant script, it may take a while for the entire topology to become available. We choose to include the option --provision because, with our pc's, when we omit this option, all commands in the shell files become invisible to vagrant, so the virtual machines start but without configuration. Don't worry if, while vagrant is working, appears on the screen some red lines, it will be fine. 
  - Verify the status of the 4 VMs
  ```
- [dncs-lab]$ vagrant status                                                                                                                                                        
+ vagrant status 
+```
+- Hopefully, this command will return  something like that:
+```
 Current machine states:
 
 router-1                  running (virtualbox)
@@ -355,10 +355,10 @@ host-1-b                  running (virtualbox)
 host-2-c                  running (virtualbox)
 
 ```
-Hopefully, this command will return  something like that. It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.  
+It means that our six VM's, corresponding to the six components of the topology, are set up and running. You can confirm the fact by opening VirualBox and see that there are six virtual machines running named dncs-lab_router-1, dncs-lab_router-2 etc.  
 ## Common part
-This part reports command that you can use in every VM with the same purposes.  
-- Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned folder and and type this commands:  
+This part reports commands you can use in every VM with the same purposes.  
+- Once all the VMs are running verify you can log into all of them, by opening six terminals, log into the cloned repo folder and and type this commands:  
 Terminal 1 --> `vagrant ssh router-1`  
 Terminal 2 --> `vagrant ssh router-2`  
 Terminal 3 --> `vagrant ssh switch`  
@@ -391,7 +391,7 @@ It displays the list of Ethernet interfaces present in the host and their option
  ``` 
    tcpdump -i interfaceName
   ```  
-  This command allow to sniff the packets on an Ethernet Interface, such as program as WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. After the execution of this command, every information of packets passing trought the interface will be displayed, such as the protocol at level four the packet belongs and other informations. 
+  This command allow to sniff the packets on an Ethernet Interface, such as program like WireShark do. It is useful if you want to trace the route of a packet from the source to destination, and even to debug errors in routes. After the execution of this command, every information of packets passing trought the interface will be displayed, such as the protocol at level four the packet belongs and other informations. 
 - Another command we want to discuss in the common section is this:  
   ``` 
   route -nve
@@ -436,7 +436,7 @@ lo        Link encap:Local Loopback
           collisions:0 txqueuelen:0 
           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 ```  
-eth0 is the dummy interface that "link" our VM with the Ethernet card of our PC.   eth1 is the interface that link the host with the switch. We can see the ip associated with this interface as well as the subnet-mask.  lo is a fictitious interface, that is, briefly, the local-host.  
+eth0 is the dummy interface that "link" our VM with the Ethernet card of our PC.   eth1 is the interface that link the host with the switch. We can see the ip associated with this interface as well as the subnet-mask. Lo is a fictitious interface, that is, briefly, the local-host.  
 - Here i report the output of **route -nve** on host-1-a  
  ```  
 Kernel IP routing table
@@ -488,7 +488,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 ``` 
 ## Switch
 
-As below you must be logged into switch VM as a superuser. To manage VLANs we installed Open vSwitch. This tool give us the opportunity to virtually divide the switch in two switches, one for the, here called vlan11 and one for the vlan12. You can find more information about this choice in the paragraph above, where we discuss our choice. The purpose  of this subparagraph is to describe the most useful command in switch. They aren't configuration commands, but only informational commands, because the configuration commands runs from within shell files.
+As below you must be logged into switch VM as a superuser. To manage VLANs we installed Open vSwitch. This tool give us the opportunity to virtually divide the switch in two switches, one for the, here called vlan11 and one for the vlan12. You can find more information about this choice in the paragraph above. The purpose  of this subparagraph is to describe the most useful command in switch. They aren't configuration commands, but only informational commands, because the configuration commands runs from within shell files.
 The first command is this: 
   ``` 
    ovs-vsctl list-br
@@ -614,7 +614,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 192.168.251.0   0.0.0.0         255.255.255.252 U         0 0          0 eth2
 192.168.252.0   192.168.251.2   255.255.255.252 UG        0 0          0 eth2
 ```  
-This table is a lot informative! This table is automatically compiled by the ospf protocol. We can see that to the subnets directly connected the protocol assigned the default gateway. We think that this means to the router that they are directly connected and so the packets can be delivered without other gateways in between. The only subnet not connected (the subnet of host-2-c) has a route in the table, that points to the interface eth2, and has an ip gateway that is the ip of the eth2 interface on router-2! That's all. Ah, we can see that we have two eth1 interfaces; that are in our opinion fictitious, in fact Ethernet 1 is a trunk link, so that means that packets on this link must be tagged.  
+This table is a lot informative! This table is automatically compiled by the ospf protocol. We can see that to the subnets directly connected the protocol assigned the default gateway. We think that this means to the router that they are directly connected and so the packets can be delivered without other gateways in between. The only subnet not connected (the subnet of host-2-c) has a route in the table, that points to the interface eth2, and has an ip gateway that is the ip of the eth2 interface on router-2! That's all. 
   - Output of the command **ifconfig** on router-1:  
  ```
  eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
@@ -689,7 +689,7 @@ Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
 - Output of the command **ifconfig** on router-2:  
 ```
 eth0      Link encap:Ethernet  HWaddr 08:00:27:20:c5:44  
-          inet addr:10.0.2.15  Bcast:10.0.2.255  Mask:255.255.255.0
+          inet addr:10.0.2.15  Bcast:10.0.2.255 Mask:255.255.255.0
           inet6 addr: fe80::a00:27ff:fe20:c544/64 Scope:Link
           UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
           RX packets:19641 errors:0 dropped:0 overruns:0 frame:0
@@ -726,7 +726,7 @@ lo        Link encap:Local Loopback
 
 ```
 ## Host-2-c
-This is the host where our webserver is deployed. We installed docker on it, that is a manager of the so called "containers". Containers are an abstraction at the app layer instead of VM that are an abstraction of the hardware. Multiple containers can run on the same machine and share the OS kernel with other containers. Containers take up less space than VMs. To build up a container you need a repository for the "images", that are used by docker to set up our container. We downloaded the image httpd:2.4 that is an image used to set up a container of an apache server. So on this host we have an apache server running in a docker container (the container use less than 3 Mbyte of memory!! Incredible!).  
+This is the host where our webserver is deployed. We installed docker on it, that is a manager of the so called "containers". Containers are an abstraction at the app layer. They are different from VM that are an abstraction of the hardware. Multiple containers can run on the same machine and share the OS kernel with other containers. Containers take up less space than VMs. To build up a container you need a repository for the "images", that are used by docker to set up our container. We downloaded the image httpd:2.4 that is an image used to set up a container of an apache server. So on this host we have an apache server running in a docker container (the container use less than 3 Mbyte of memory!! Incredible!).  
 - The first useful command is:  
 ```
 docker image ls 
@@ -746,7 +746,7 @@ This command display the list of containers running on the docker environment, i
  CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                  NAMES
 273d5a3a895c        httpd:2.4           "httpd-foreground"   3 hours ago         Up 3 hours          0.0.0.0:8080->80/tcp   SRwebserver
 ```
-We can see that the server is listening for requests on the port 8080, considering them as http requests (that we know need tcp protocol for a reliable connection). 
+We can see that the server is listening for requests on the port 8080, considering them as http requests (that we know use tcp protocol for a reliable connection). 
 - A command to see the docker statistics:
 ```
 docker stats
@@ -762,7 +762,7 @@ CONTAINER ID        NAME                CPU %               MEM USAGE / LIMIT   
 273d5a3a895c        SRwebserver         0.02%               2.945MiB / 237.7MiB   1.24%               1.83kB / 907B       7.06MB / 0B         0
 
 ```
-We see that data in output change from 0 to 907 bytes. In fact the server pushed in output the file requested, so this ratio has increase.
+We see that data in output change from 0 to 907 bytes. In fact the server pushed in output the file requested, so this ratio increases.
 - Output of the command **route -nve** on host-2-c:  
 ```
 Kernel IP routing table
@@ -822,4 +822,4 @@ veth323e421 Link encap:Ethernet  HWaddr aa:c8:8f:f3:bd:22
  
 ```
 ## Final comments
-Here finish our project for the course of Design of Networks and Communication System, must say that we forked the repository from [dustnic/dncs-lab]. This project is powered by dustnic, that permit us to fork his files and expand it as a project. 
+Here finish our project for the course of Design of Networks and Communication System, must say that we forked the repository from [dustnic/dncs-lab]. This project is powered by dustnic, that we want to thank because he permit us to fork his files and expand it as a project. 
