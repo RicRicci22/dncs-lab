@@ -229,9 +229,9 @@ Host2c.sh contains this lines:
 Now we focus on the most important commands in this file:
 
 **Lines 4-5-6-7-8:** This lines download and install *docker*.  
-**Line 9-10-11:** Same as above, but with interfaces and ip's referring to the subnet C.
+**Line 9-10-11:** Same as above, but with interfaces and ip's referring to the subnet C.  
 **Line 12:** This command kills all docker containers if present, is useful if a user reload the VM more than once (specially if he has done some modify to the project).  
-**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server named SRwebserver, that listen for incoming requests on the port 8080. 
+**Line 14:** This command runs a docker container using an apache web-server image [`httpd:2.4`]. With this command line we create our web-server named SRwebserver, that listen for incoming requests on the port 8080.  
 **Lines 16 to 29:** With the command echo we insert a simple html code in a file called `index.html`creating the file if not present, overwriting it if it is already present. This file is hosted in the right directory of our SRwebserver.
 
 ## switch.sh
