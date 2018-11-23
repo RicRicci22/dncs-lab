@@ -258,7 +258,7 @@ Switch.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments.
+**Line 5:** This lines download and install *open vSwitch*. Open vSwitch is an open-source implementation of a distributed virtual multilayer switch. The main purpose of Open vSwitch is to provide a switching stack for hardware virtualization environments.  
 **Line 6:** This command delete the bridge named 'switch' if present, is useful if a user load the VM more than once maybe after some updates.  
 **Line 7:** In this line we add a bridge called 'switch'.  
 **Line 8:** In this line we add `eth1` port to the 'switch' bridge.  
@@ -298,8 +298,8 @@ Router1.sh contains this lines:
 
 Now we focus on the most important commands in this file:
 
-**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF.
-**Line 9:** This line set up the forwarding in the router. It must to be set to 1 if you want the router works properly.
+**Line 8:** In this line we install FRR. FRRouting is an IP routing protocol suite for Linux and Unix platforms which includes protocol daemons for BGP, IS-IS, LDP, OSPF, PIM, and RIP. In fact we choose to make a dynamic routing between two router. We choose to use OSPF.  
+**Line 9:** This line set up the forwarding in the router. It must to be set to 1 if you want the router works properly.  
 **Lines 10-13-14-15:** We set `eth1`,  `eth1.11`,  `eth1.12`,  `eth2`, the router interface, UP.  
 **Line 11-12:** In this line we add add links `eth1.11` and `eth1.12`. This 2 links are Vlan type and respectively has id 11 and 12.  
 **Lines 16-17-18** In this lines we assign IP addresses with properly subnet-masks to `router-1 eth1`, `router-1 eth1.11`, `router-1 eth1.12`.  
